@@ -15,6 +15,7 @@ import Cadastro from "./components/Cadastro";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { useEquipments } from "./hooks/useEquipments";
 import "./styles.css";
+import { SkeletonList } from "./components/Skeleton";
 
 function AcessoNegado() {
   return (
@@ -65,7 +66,13 @@ function AppContent() {
     deleteEquipment,
   } = useEquipments();
 
-  if (carregando) return <div className="loading">Carregando...</div>;
+if (carregando) {
+  return (
+    <div className="app-loading-wrapper">
+      <SkeletonList items={6} />
+    </div>
+  );
+}
 
   if (telaAuth === "login" && !usuario) {
     return (

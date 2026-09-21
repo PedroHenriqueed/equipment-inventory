@@ -7,6 +7,7 @@ import {
   PROCESSADORES,
   MEMORIAS,
   POSSES,
+  STATUS,
 } from "../constants/options";
 import ToogleSwitch from "./ToogleSwitch";
 import Dropdown from "./ui/Dropdown";
@@ -16,6 +17,7 @@ const EMPTY_FORM = {
   setor: "",
   dispositivo: "",
   modelo: "",
+  status: "Em uso",
   sistema_operacional: "",
   processador: "",
   memoria: "",
@@ -140,6 +142,14 @@ const validate = () => {
           value={form.setor}
           onChange={handleChange}
           options={SETORES}
+        />
+
+        <Dropdown
+          label="Status"
+          name="status"
+          value={form.status}
+          onChange={handleChange}
+          options={STATUS}
         />
 
         <Dropdown

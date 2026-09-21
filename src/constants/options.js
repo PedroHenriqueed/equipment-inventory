@@ -69,7 +69,7 @@ export const MODELOS_POR_DISPOSITIVO = {
   Monitor: ["Dell", "Samsung", "LG", "AOC", "Acer", "Outro"],
   Impressora: ["HP", "Epson", "Brother", "Canon", "Outro"],
   Tablet: ["Samsung", "iPad", "Lenovo", "Outro"],
-  Celular: ["Samsung","Xiaomi", "iPhone", "Motorola", "Outro"],
+  Celular: ["Samsung", "Xiaomi", "iPhone", "Motorola", "Outro"],
   Outro: ["Outro"],
 };
 
@@ -116,3 +116,5 @@ export const POSSES = [
   "VIRTUO",
   "OUTRO",
 ];
+
+export const STATUS = ["Em uso", "Disponível", "Em manutenção", "Empréstimo"];

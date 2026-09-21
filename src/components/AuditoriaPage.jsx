@@ -6,6 +6,9 @@ import {
   ChevronUp,
   ArrowRightLeft,
 } from "lucide-react";
+import AITextLoading from "../components/AITextLoading";
+
+
 
 const LABELS_CAMPOS = {
   responsavel: "Responsável",
@@ -151,7 +154,13 @@ export default function AuditoriaPage() {
       </div>
 
       {loading ? (
-        <p>Carregando...</p>
+        <AITextLoading
+          texts={[
+            "Carregando histórico...",
+            "Buscando registros...",
+            "Quase lá...",
+          ]}
+        />
       ) : logs.length === 0 ? (
         <p>Nenhum registro encontrado.</p>
       ) : filtroAcao === "TRANSFERENCIA" ? (

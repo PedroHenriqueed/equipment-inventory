@@ -1,0 +1,30 @@
+.ai-text-loading-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.ai-text-loading-inner {
+  position: relative;
+  width: 100%;
+  padding: 0.5rem 1rem;
+}
+
+.ai-text-loading-text {
+  display: flex;
+  justify-content: center;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 1.875rem;
+  background: linear-gradient(
+    90deg,
+    #0a0a0a 0%,
+    #a3a3a3 50%,
+    #0a0a0a 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

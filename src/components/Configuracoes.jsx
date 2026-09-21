@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
+import { Skeleton } from "../components/Skeleton";
+
 
 const ROLES = ["user", "editor", "admin", "superadmin"];
 
@@ -72,13 +74,42 @@ function Configuracoes() {
     setSaving(null);
   }
 
-  if (loading) {
-    return (
-      <div className="home-container">
-        <p>Carregando...</p>
+if (loading) {
+  return (
+    <div className="home-container">
+      <div className="card">
+        <Skeleton width="260px" height="1.6rem" className="skeleton-title" />
+
+        <div className="table-wrapper">
+          <table className="equipment-table">
+            <thead>
+              <tr>
+                <th>
+                  <Skeleton width="80px" height="1rem" />
+                </th>
+                <th>
+                  <Skeleton width="80px" height="1rem" />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i}>
+                  <td>
+                    <Skeleton width="140px" height="1.2rem" />
+                  </td>
+                  <td>
+                    <Skeleton width="120px" height="1.8rem" />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   if (error) {
     return (

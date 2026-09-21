@@ -1,8 +1,10 @@
 import { useState, useMemo } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import ActionMenu from "./ActionMenu";
+import { Status } from "../components/ui/Status";
 
 const COLUMNS = [
+  { key: "status", label: "Status" },
   { key: "responsavel", label: "Responsável" },
   { key: "setor", label: "Setor" },
   { key: "dispositivo", label: "Dispositivo" },
@@ -23,6 +25,14 @@ export default function EquipmentList({
   const [selectedIds, setSelectedIds] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
+function mapStatusClass(status) {
+  const normalized = (status || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // remove acentos
+    .replace(/\s+/g, "-");
+  return `status-${normalized}`;
+}
   // ===== Ordenação =====
   const handleSort = (key) => {
     setSortConfig((prev) => {
@@ -177,13 +187,21 @@ export default function EquipmentList({
                     </label>
                   </td>
                   <td>
+                    <span
+                      className={`status-badge ${mapStatusClass(eq.status)}`}
+                    >
+                      <span className="status-dot" />
+                      {eq.status || "-"}
+                    </span>
+                  </td>
+                  <td>
                     {eq.responsavel}
                     {ehHistorico && (
                       <span
                         className="badge-historico"
                         title={`${responsavelFiltro} já utilizou este equipamento anteriormente`}
                       >
-                         já usado por {responsavelFiltro}
+                        já usado por {responsavelFiltro}
                       </span>
                     )}
                   </td>

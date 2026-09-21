@@ -32,6 +32,24 @@ function mapConstraintToField(message) {
   return { field: null, label: "Campo" };
 }
 
+// Registra uma transição de status na tabela de histórico.
+// Não lança erro para não travar o update principal caso essa gravação falhe.
+async function registrarHistoricoStatus(
+  equipmentId,
+  statusAnterior,
+  statusNovo,
+) {
+  const { error } = await supabase.from("status_history").insert({
+    equipment_id: equipmentId,
+    status_anterior: statusAnterior,
+    status_novo: statusNovo,
+  });
+
+  if (error) {
+    console.error("Erro ao registrar histórico de status:", error.message);
+  }
+}
+
 export function useEquipments() {
   const [equipments, setEquipments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,11 +85,20 @@ export function useEquipments() {
       throw error;
     }
 
+    // registra o status inicial no histórico (opcional, mas útil pra ter o registro completo)
+    if (data[0]?.status) {
+      await registrarHistoricoStatus(data[0].id, null, data[0].status);
+    }
+
     setEquipments((prev) => [...prev, ...data]);
     return data[0];
   };
 
   const updateEquipment = async (id, payload) => {
+    // busca o status atual (antes do update) para comparar
+    const equipamentoAtual = equipments.find((eq) => eq.id === id);
+    const statusAnterior = equipamentoAtual?.status;
+
     const { data, error } = await supabase
       .from("equipamentos")
       .update(payload)
@@ -87,6 +114,11 @@ export function useEquipments() {
       throw error;
     }
 
+    // se o status mudou, registra no histórico
+    if (payload.status && statusAnterior && payload.status !== statusAnterior) {
+      await registrarHistoricoStatus(id, statusAnterior, payload.status);
+    }
+
     setEquipments((prev) => prev.map((eq) => (eq.id === id ? data : eq)));
     return data;
   };
@@ -97,6 +129,18 @@ export function useEquipments() {
     setEquipments((prev) => prev.filter((eq) => eq.id !== id));
   };
 
+  // busca o histórico de status de um equipamento específico
+  const fetchStatusHistory = async (equipmentId) => {
+    const { data, error } = await supabase
+      .from("status_history")
+      .select("*")
+      .eq("equipment_id", equipmentId)
+      .order("criado_em", { ascending: false });
+
+    if (error) throw error;
+    return data;
+  };
+
   return {
     equipments,
     loading,
@@ -104,6 +148,7 @@ export function useEquipments() {
     addEquipment,
     updateEquipment,
     deleteEquipment,
+    fetchStatusHistory,
     refetch: fetchEquipments,
   };
 }

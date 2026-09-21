@@ -417,33 +417,6 @@ header h1 {
   background: #232323;
 }
 
-.status-badge {
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status-Disponível {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-}
-
-.status-Em-uso {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-}
-
-.status-Manutenção {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-}
-
-.status-Descartado {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-}
-
 .empty-state {
   text-align: center;
   padding: 30px;
@@ -689,7 +662,7 @@ header h1 {
 .toogle-group {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* centraliza horizontalmente */
+  justify-content: center;
   align-items: center;
   gap: 24px;
   margin-top: 24px;
@@ -1090,8 +1063,6 @@ header h1 {
   width: var(--sidebar-expanded);
 }
 
-/* ===== Topbar interna da sidebar (removida a antiga sidebar-topbar duplicada; 
-   mantida caso ainda seja usada em algum lugar do componente Sidebar) ===== */
 .sidebar-topbar {
   display: flex;
   align-items: center;
@@ -1304,7 +1275,7 @@ header h1 {
 
 .dropdown-trigger,
 .field input {
-  height: 46px; /* mesma altura fixa */
+  height: 46px;
   line-height: 1.4;
   box-sizing: border-box;
 }
@@ -2010,11 +1981,12 @@ header h1 {
 /* ===== Container fixo dos alertas ===== */
 .alert-banner-container {
   position: fixed;
-  top: 20px;
+  bottom: 20px;
   right: 20px;
+  top: auto;
   z-index: 9999;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: 12px;
   max-width: 380px;
   width: 100%;
@@ -2144,18 +2116,6 @@ header h1 {
 }
 .alert-banner-action-secondary:hover {
   color: #f2f2f2;
-}
-.alert-banner-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  top: auto;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 12px;
-  max-width: 380px;
-  width: 100%;
 }
 
 /* ===== TELA DE LOGIN / CADASTRO ===== */
@@ -2473,6 +2433,12 @@ header h1 {
   padding: 14px 16px;
   cursor: pointer;
 }
+.auditoria-item-header .skeleton {
+  flex-shrink: 0;
+}
+.skeleton-title {
+  margin-bottom: 16px;
+}
 .badge-acao {
   font-size: 12px;
   font-weight: 700;
@@ -2637,7 +2603,83 @@ header h1 {
   text-align: center;
 }
 
-/* ===== Responsivo ===== */
+/* ===== Status badge ===== */
+
+
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px;
+  white-space: nowrap;
+  color: #f2f2f2; /* texto sempre neutro */
+}
+
+.status-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+
+.status-dot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: status-pulse 1.6s ease-in-out infinite;
+}
+
+/* Cor da bolinha, isolada do texto */
+.status-disponivel .status-dot::before {
+  background: #34d399;
+}
+.status-em-uso .status-dot::before {
+  background: #60a5fa;
+}
+.status-em-manutencao .status-dot::before {
+  background: #fbbf24;
+}
+.status-emprestimo .status-dot::before {
+  background: #a78bfa;
+}
+.status-descartado .status-dot::before {
+  background: #f87171;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.4s infinite;
+  border-radius: 6px;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+}
+
+.skeleton-card {
+  border-radius: 8px;
+}
+
+===== Responsivo ===== */
 @media (max-width: 768px) {
   .sidebar {
     width: 72px;

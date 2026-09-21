@@ -13,6 +13,33 @@ export default function EquipmentViewModal({
   const [saving, setSaving] = useState(false);
   const [mouseDownOnOverlay, setMouseDownOnOverlay] = useState(false);
 
+  function InfoItem({ label, value, raw }) {
+    return (
+      <div className="info-item">
+        <span className="info-label">{label}</span>
+        <span className="info-value">{raw ? value : value || "-"}</span>
+      </div>
+    );
+  }
+
+  function StatusBadge({ status }) {
+    if (!status) return "-";
+    const slug = statusSlug(status);
+    return (
+      <span className={`status-badge status-${slug}`}>
+        <span className="status-dot"></span>
+        {status}
+      </span>
+    );
+  }
+
+  function statusSlug(status) {
+    return status
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "-");
+  }
   useEffect(() => {
     setIsEditing(!equipamento && isAdmin);
   }, [equipamento, isAdmin]);
@@ -83,6 +110,11 @@ export default function EquipmentViewModal({
                   />
                   <InfoItem label="Modelo" value={equipamento.modelo} />
                   <InfoItem label="Posse" value={equipamento.posse} />
+                  <InfoItem
+                    label="Status"
+                    value={<StatusBadge status={equipamento.status} />}
+                    raw
+                  />
                 </div>
               </section>
 
