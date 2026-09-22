@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../lib/supabaseClient"; // ajuste o path se necessário
-import EquipmentFilters from "./EquipmentFilters"; // ajuste o path se necessário
-import EquipmentList from "./EquipmentList"; // ajuste o path se necessário
+import { supabase } from "../lib/supabaseClient";
+import EquipmentFilters from "./EquipmentFilters";
+import EquipmentList from "./EquipmentList";
 
 const FILTROS_EXATOS = [
   "setor",
@@ -31,7 +31,6 @@ export default function VisualizarEquipamentos({
   equipments,
   loading,
   error,
-  onView,
   onEdit,
   onDelete,
   onBulkDelete,
@@ -53,31 +52,33 @@ export default function VisualizarEquipamentos({
   // ===== Buscar histórico de transferências quando filtrar por responsável =====
   const [historicoIds, setHistoricoIds] = useState(new Set());
 
-useEffect(() => {
-  async function buscarHistorico() {
-    if (!filters.responsavel) {
-      setHistoricoIds(new Set());
-      return;
+  useEffect(() => {
+    async function buscarHistorico() {
+      if (!filters.responsavel) {
+        setHistoricoIds(new Set());
+        return;
+      }
+
+      const valor = filters.responsavel.replace(/"/g, '\\"');
+
+      const { data, error } = await supabase
+        .from("equipamentos_transferencias")
+        .select("equipamento_id, responsavel_anterior, responsavel_novo")
+        .or(
+          `responsavel_anterior.eq."${valor}",responsavel_novo.eq."${valor}"`,
+        );
+
+      if (error) {
+        console.error("Erro ao buscar histórico de transferências:", error);
+        setHistoricoIds(new Set());
+        return;
+      }
+
+      setHistoricoIds(new Set((data || []).map((d) => d.equipamento_id)));
     }
 
-    const valor = filters.responsavel.replace(/"/g, '\\"');
-
-    const { data, error } = await supabase
-      .from("equipamentos_transferencias")
-      .select("equipamento_id, responsavel_anterior, responsavel_novo")
-      .or(`responsavel_anterior.eq."${valor}",responsavel_novo.eq."${valor}"`);
-
-    if (error) {
-      console.error("Erro ao buscar histórico de transferências:", error);
-      setHistoricoIds(new Set());
-      return;
-    }
-
-    setHistoricoIds(new Set((data || []).map((d) => d.equipamento_id)));
-  }
-
-  buscarHistorico();
-}, [filters.responsavel]);
+    buscarHistorico();
+  }, [filters.responsavel]);
 
   // ===== Filtragem =====
   const equipmentsFiltrados = useMemo(() => {
@@ -160,7 +161,6 @@ useEffect(() => {
 
       <EquipmentList
         equipments={equipmentsFiltrados}
-        onView={onView}
         onEdit={onEdit}
         onDelete={onDelete}
         onBulkDelete={onBulkDelete}

@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabaseClient";
 const CONSTRAINT_MAP = {
   idx_unique_mac: { field: "mac", label: "MAC" },
   idx_unique_numero_serie: { field: "numero_serie", label: "Número de Série" },
+  idx_unique_hostname: { field: "hostname", label: "Hostname" },
   idx_unique_patrimonio_dispositivo: {
     field: "patrimonio_dispositivo",
     label: "Patrimônio do Dispositivo",

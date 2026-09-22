@@ -17,6 +17,7 @@ const EMPTY_FORM = {
   setor: "",
   dispositivo: "",
   modelo: "",
+  hostname: "",
   status: "Em uso",
   sistema_operacional: "",
   processador: "",
@@ -171,6 +172,15 @@ const validate = () => {
           placeholder={
             form.dispositivo ? "Selecione..." : "Escolha o dispositivo primeiro"
           }
+        />
+
+        <Field
+          label="Hostname"
+          name="hostname"
+          value={form.hostname}
+          onChange={handleChange}
+          placeholder="Ex: NB-INFRA-01"
+          error={errors.hostname}
         />
 
         <Dropdown

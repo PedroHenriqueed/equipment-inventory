@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Toaster } from "react-hot-toast";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Topbar from "./components/Topbar";
 import { AlertProvider } from "./components/ui/AlertProvider";
 import Sidebar from "./components/Sidebar";
@@ -14,8 +15,8 @@ import Login from "./components/Login";
 import Cadastro from "./components/Cadastro";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { useEquipments } from "./hooks/useEquipments";
+import EquipmentPageWrapper from "./components/EquipmentPageWrapper";
 import "./styles.css";
-import { SkeletonList } from "./components/Skeleton";
 
 function AcessoNegado() {
   return (
@@ -66,13 +67,13 @@ function AppContent() {
     deleteEquipment,
   } = useEquipments();
 
-if (carregando) {
-  return (
-    <div className="app-loading-wrapper">
-      <SkeletonList items={6} />
-    </div>
-  );
-}
+  if (carregando) {
+    return (
+      <div className="app-loading-wrapper">
+        <p>Carregando...</p>
+      </div>
+    );
+  }
 
   if (telaAuth === "login" && !usuario) {
     return (
@@ -238,7 +239,21 @@ if (carregando) {
         <main
           className={`main-content ${sidebarOpen ? "expanded" : "collapsed"}`}
         >
-          {renderContent()}
+          <Routes>
+            {/* Rota de detalhes do equipamento (página dedicada) */}
+            <Route
+              path="/equipamentos/:id"
+              element={
+                <EquipmentPageWrapper
+                  equipments={equipments}
+                  isAdmin={isAdmin}
+                  onEdit={handleEdit}
+                />
+              }
+            />
+            {/* Todas as outras rotas caem no sistema de abas existente */}
+            <Route path="*" element={renderContent()} />
+          </Routes>
         </main>
 
         {modalAberto && (
@@ -264,9 +279,11 @@ if (carregando) {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

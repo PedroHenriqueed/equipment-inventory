@@ -13,7 +13,7 @@ export default function CadastrarEquipamento({ onSave, onSuccess }) {
     try {
       await onSave(formData);
       toast.success("Equipamento cadastrado com sucesso!");
-      setFormKey((k) => k + 1); // remonta o form limpo
+      setFormKey((k) => k + 1); 
       onSuccess();
     } catch (err) {
       if (err?.type === "duplicate" && err.field?.field) {

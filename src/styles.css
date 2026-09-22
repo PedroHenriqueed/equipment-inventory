@@ -2679,7 +2679,173 @@ header h1 {
   border-radius: 8px;
 }
 
-===== Responsivo ===== */
+/* EquipmentPage.css */
+.equipment-page {
+  display: flex;
+   margin-top: -20px;
+  flex-direction: column;
+  height: 100%;
+  background: #0d0d0d;
+  color: #fff;
+}
+
+.equipment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 32px;
+  border-bottom: 1px solid #22222c;
+}
+.last-updated {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 2px;
+  line-height: 1.2;
+}
+.avatar-initial {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.btn-edit-wide {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px; /* mais largo que o padrão */
+  min-width: 120px;
+  justify-content: center;
+}
+.header-left {
+  display: flex;
+  gap: 8px;
+}
+.header-left h1 {
+  font-size: 20px;
+  margin: 0px;
+  line-height: 1.2;
+}
+.subtitle {
+  font-size: 13px;
+  margin-left: 14px;
+  color: #999;
+  line-height: 1.2;
+}
+.btn-back {
+  display: none;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0px;
+  margin-bottom: 78px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-close:hover {
+  background: #262626;
+  color: #f2f2f2;
+}
+
+.icon-equipment {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  width: 68px;
+  height: 68px;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items:baseline;
+  justify-content: center;
+}
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1c1c26;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.pill-label { font-size: 11px; color: #888; }
+.pill-value { font-size: 13px; font-weight: 600; }
+
+.equipment-tabs {
+  display: flex;
+  gap: 24px;
+  padding: 0 32px;
+  border-bottom: none;
+}
+.tab {
+    display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #888;
+  padding: 14px 4px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.tab.active { color: #fff; border-color: #4f6bff; }
+
+.equipment-content { padding: 24px 32px; overflow-y: auto; }
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.info-card {
+  background: #1c1c26;
+  border-radius: 12px;
+  padding: 20px;
+}
+.info-card h3 { font-size: 14px; color: #aaa; margin-bottom: 16px; }
+.span-full { grid-column: 1 / -1; }
+
+.info-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a2a36; }
+.info-label { color: #888; font-size: 13px; }
+.info-value { font-weight: 600; font-size: 13px; }
+
+.tags-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.modal-tag {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+.modal-tag.active { background: #1f4d2e; color: #4ade80; }
+.modal-tag.inactive { background: #4d1f1f; color: #f87171; }
+
+
+/*===== Responsivo ===== */
 @media (max-width: 768px) {
   .sidebar {
     width: 72px;

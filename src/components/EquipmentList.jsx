@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import ActionMenu from "./ActionMenu";
 import { Status } from "../components/ui/Status";
@@ -17,22 +18,28 @@ export default function EquipmentList({
   equipments,
   onEdit,
   onDelete,
-  onView,
   onBulkDelete,
   responsavelFiltro,
   historicoIds,
 }) {
+  const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
-function mapStatusClass(status) {
-  const normalized = (status || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // remove acentos
-    .replace(/\s+/g, "-");
-  return `status-${normalized}`;
-}
+  function mapStatusClass(status) {
+    const normalized = (status || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // remove acentos
+      .replace(/\s+/g, "-");
+    return `status-${normalized}`;
+  }
+
+  // Navega para a página de detalhes do equipamento
+  const handleView = (eq) => {
+    navigate(`/equipamentos/${eq.id}`);
+  };
+
   // ===== Ordenação =====
   const handleSort = (key) => {
     setSortConfig((prev) => {
@@ -170,7 +177,7 @@ function mapStatusClass(status) {
               return (
                 <tr
                   key={eq.id}
-                  onClick={() => onView(eq)}
+                  onClick={() => handleView(eq)}
                   className="equipment-row"
                   style={{ cursor: "pointer" }}
                 >
@@ -212,7 +219,7 @@ function mapStatusClass(status) {
                   <td>{eq.patrimonio_dispositivo || "-"}</td>
                   <td onClick={(e) => e.stopPropagation()}>
                     <ActionMenu
-                      onView={() => onView(eq)}
+                      onView={() => handleView(eq)}
                       onEdit={() => onEdit(eq)}
                       onDelete={() => onDelete(eq)}
                     />

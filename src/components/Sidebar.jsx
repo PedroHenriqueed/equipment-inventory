@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Home as HomeIcon, Plus, List, User, History } from "lucide-react";
 
 const menuItems = [
@@ -29,11 +30,18 @@ const menuItems = [
 ];
 
 function Sidebar({ activeTab, setActiveTab, open, isAdmin, isSuperAdmin }) {
+  const navigate = useNavigate();
+
   const itemsVisiveis = menuItems.filter((item) => {
     if (item.superAdminOnly) return isSuperAdmin;
     if (item.adminOnly) return isAdmin;
     return true;
   });
+
+  const handleClick = (key) => {
+    setActiveTab(key);
+    navigate("/"); // 👈 garante saída da rota /equipamentos/:id
+  };
 
   return (
     <aside className={`sidebar ${open ? "expanded" : "collapsed"}`}>
@@ -43,7 +51,7 @@ function Sidebar({ activeTab, setActiveTab, open, isAdmin, isSuperAdmin }) {
             key={item.key}
             className={`sidebar-item ${activeTab === item.key ? "active" : ""}`}
             data-label={item.label}
-            onClick={() => setActiveTab(item.key)}
+            onClick={() => handleClick(item.key)}
           >
             <span className="sidebar-icon">{item.icon}</span>
             {open && <span className="sidebar-label">{item.label}</span>}

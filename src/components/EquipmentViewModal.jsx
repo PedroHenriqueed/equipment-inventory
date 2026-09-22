@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import EquipmentForm from "./EquipmentForm";
+import { X, Check } from "lucide-react";
+
 
 export default function EquipmentViewModal({
   equipamento,
@@ -79,7 +81,7 @@ export default function EquipmentViewModal({
                 : "Detalhes do Equipamento"}
           </h2>
           <button className="modal-close" onClick={onClose} aria-label="Fechar">
-            ✕
+            <X size={18} />
           </button>
         </div>
 
@@ -99,6 +101,7 @@ export default function EquipmentViewModal({
               <section className="modal-section">
                 <h3>Informações Gerais</h3>
                 <div className="modal-grid">
+                  <InfoItem label="Hostname" value={equipamento.hostname} />
                   <InfoItem
                     label="Responsável"
                     value={equipamento.responsavel}
@@ -204,7 +207,7 @@ function InfoItem({ label, value }) {
 function Tag({ label, active }) {
   return (
     <span className={`modal-tag ${active ? "active" : "inactive"}`}>
-      {active ? "✓" : "✕"} {label}
+      {active ? <Check size={14} /> : <X size={14} />} {label}
     </span>
   );
 }
