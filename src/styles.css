@@ -645,7 +645,6 @@ header h1 {
 
 /* Posse sem background, só texto/link estilizado */
 .infogerais-card-posse-value {
-
   font-size: 13px;
   font-weight: 600;
   background: none;
@@ -694,7 +693,6 @@ header h1 {
 }
 
 /* ===== Toggle ===== */
-
 .toggle-switch {
   margin-top: 14px;
   display: flex;
@@ -717,6 +715,7 @@ header h1 {
   transition: background 0.25s ease;
   flex-shrink: 0;
 }
+
 .toogle-group {
   display: flex;
   flex-wrap: wrap;
@@ -1609,21 +1608,6 @@ header h1 {
 
 .btn-primary:hover {
   background: #2563eb;
-}
-
-/* Cards: 2 por coluna (fixo) */
-.grid-cards {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  width: 100%;
-  margin-left: 0;
-  gap: 30px;
-}
-
-@media (max-width: 900px) {
-  .grid-cards {
-    grid-template-columns: 1fr;
-  }
 }
 
 .card {
@@ -3928,6 +3912,7 @@ header h1 {
   font-size: 1rem;
   white-space: nowrap;
 }
+
 /* Dropzone de upload */
 .upload-dropzone {
   border: 2px dashed #333;
@@ -4052,64 +4037,8 @@ header h1 {
 .patrimonio-card-possui.is-nao {
   color: #ef4444;
 }
-.geral-tab-left {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
 
-.geral-tab-left .infogerais-card {
-  width: 100%;
-}
-.geral-tab-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-    max-width: 1300px; /* controla a largura total do conteúdo */
-  margin: 0 auto;
-}
-.geral-tab-row-top .infogerais-card,
-.geral-tab-row-top .uptime-card {
-  min-height: 320px; /* aumenta a altura dos cards */
-}
-.geral-tab-row-top .infogerais-card-body,
-.geral-tab-row-top .uptime-card-body {
-  padding: 28px 26px; /* mais respiro interno */
-}
-.geral-tab-row {
-  display: grid;
-  gap: 16px;
-}
-
-.geral-tab-row-top {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 20px;
-  justify-content: center;
-  width: 1550px;
-  align-items: stretch;
-}
-
-
-.geral-tab-row-bottom {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-   justify-content: center;
-  align-items: stretch; /* garante mesma altura */
-}
-.geral-tab-row-bottom.centered {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.geral-tab-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: start;
-}
-
+/* ===== Seções de Layout (Geral Tabs) limpas de duplicações ===== */
 .geral-tab-left,
 .geral-tab-right {
   display: flex;
@@ -4117,23 +4046,51 @@ header h1 {
   gap: 20px;
 }
 
-.geral-tab-right-bottom {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+.geral-tab-left .infogerais-card {
+  width: 100%;
 }
 
 .geral-tab-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.geral-tab-row {
+  display: grid;
+  gap: 16px;
+}
+
+.geral-tab-col-left,
+.geral-tab-col-right {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  min-width: 0;
+}
+
+.geral-tab-row-av-fw {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .geral-tab-row-top {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 2fr 1fr;
   gap: 20px;
   align-items: stretch;
+}
+
+.geral-tab-row-top .infogerais-card,
+.geral-tab-row-top .uptime-card {
+  min-height: 320px;
+}
+
+.geral-tab-row-top .infogerais-card-body,
+.geral-tab-row-top .uptime-card-body {
+  padding: 28px 26px;
 }
 
 .geral-tab-row-bottom {
@@ -4143,55 +4100,29 @@ header h1 {
   align-items: stretch;
 }
 
-@media (max-width: 900px) {
-  .geral-tab-row-top,
-  .geral-tab-row-bottom {
-    grid-template-columns: 1fr;
-  }
-}
-@media (max-width: 900px) {
-  .geral-tab-layout {
-    grid-template-columns: 1fr;
-  }
-  .geral-tab-right-bottom {
-    grid-template-columns: 1fr;
-  }
-}
-@media (max-width: 900px) {
-  .geral-tab-row-top,
-  .geral-tab-row-bottom {
-    grid-template-columns: 1fr;
-  }
-}
-
-.geral-tab-right {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.geral-tab-row-bottom.centered {
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 .geral-tab-right-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 20px;
 }
 
-/*===== Responsivo ===== */
+/* ===== Responsivo (Consolidado) ===== */
 @media (max-width: 900px) {
-  .geral-tab-layout {
-    grid-template-columns: 1fr;
-  }
-
+  .grid-cards,
+  .geral-tab-layout,
+  .geral-tab-row-top,
+  .geral-tab-row-bottom,
+  .geral-tab-row-av-fw,
   .geral-tab-right-bottom {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 600px) {
-  .windows-info-grid {
-    grid-template-columns: 1fr;
-  }
-}
 @media (max-width: 768px) {
   .sidebar {
     width: 72px;
@@ -4204,17 +4135,12 @@ header h1 {
 }
 
 @media (max-width: 600px) {
+  .windows-info-grid,
   .form-grid {
     grid-template-columns: 1fr;
   }
 
   .filters {
     flex-direction: column;
-  }
-}
-
-@media (max-width: 900px) {
-  .grid-cards {
-    grid-template-columns: 1fr;
   }
 }
