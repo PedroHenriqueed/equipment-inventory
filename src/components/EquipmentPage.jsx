@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
   Laptop,
   Building2,
-  Pencil,
   SquarePen,
   Check,
   X,
@@ -13,17 +11,29 @@ import {
   TicketsPlane,
   LayoutDashboard,
   BrickWallShield,
-  ShieldCheck,
-  ShieldX,
   Shield,
   TriangleAlert,
   CircleCheckBig,
   FileText,
+  MonitorSpeaker,
+  Cable,
+  Monitor,
+  Fingerprint,
+  UploadCloud,
+  Download,
+  FileArchive,
+  FileSpreadsheet,
+  Music,
+  Video,
+  FileImage,
 } from "lucide-react";
 import { useInventario } from "../hooks/useInventario"; // ajuste o path se necessário
 import { useHistorico } from "../hooks/useHistorico"; // ajuste o path se necessário
 import { supabase } from "../lib/supabaseClient"; // ajuste o path se necessário
-import { SETORES } from "../constants/options"; // ✅ import corrigido
+import { SETORES, DISPOSITIVOS, POSSES } from "../constants/options"; // ✅ import corrigido
+import ToogleSwitch from "./ToogleSwitch";
+import WindowsLicenseCard from "./WindowsLicenseCard";
+import Dropdown from "./ui/Dropdown";
 
 // Ícone customizado do Windows (lucide-react não possui ícones de marca)
 function WindowsIcon({ size = 16, color = "currentColor" }) {
@@ -49,6 +59,7 @@ const TABS = [
   { label: "Hardware", icon: MonitorCog },
   { label: "Windows", icon: WindowsIcon },
   { label: "Patrimônios", icon: TicketsPlane },
+  { label: "Documentos", icon: FileText },
   { label: "Acessórios", icon: LayoutDashboard },
   { label: "Histórico", icon: FileText },
 ];
@@ -75,7 +86,13 @@ export default function EquipmentPage({ equipamento, isAdmin, onEdit }) {
     equipamento?.responsavel,
   );
   const [setorAtual, setSetorAtual] = useState(equipamento?.setor);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [equipamentoLocal, setEquipamentoLocal] = useState(equipamento);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setEquipamentoLocal(equipamento);
+  }, [equipamento]);
 
   useEffect(() => {
     setStatusAtual(equipamento?.status);
@@ -158,6 +175,12 @@ export default function EquipmentPage({ equipamento, isAdmin, onEdit }) {
     }
   }
 
+  function handleEditSaved(camposAtualizados) {
+    setEquipamentoLocal((prev) => ({ ...prev, ...camposAtualizados }));
+    if (onEdit) onEdit(camposAtualizados);
+    setShowEditModal(false);
+  }
+
   return (
     <div className="equipment-page">
       {/* HEADER FIXO */}
@@ -165,10 +188,10 @@ export default function EquipmentPage({ equipamento, isAdmin, onEdit }) {
         <div className="header-left">
           <Laptop size={62} className="icon-equipment" />
           <div className="header-title-block">
-            <h1>{equipamento.hostname || "Sem hostname"}</h1>
-            <span className="subtitle">{equipamento.dispositivo}</span>
+            <h1>{equipamentoLocal.hostname || "Sem hostname"}</h1>
+            <span className="subtitle">{equipamentoLocal.dispositivo}</span>
             <div className="last-updated">
-              Atualizado em {formatDate(equipamento.updated_at)}
+              Atualizado em {formatDate(equipamentoLocal.updated_at)}
             </div>
           </div>
         </div>
@@ -191,7 +214,10 @@ export default function EquipmentPage({ equipamento, isAdmin, onEdit }) {
           />
 
           {isAdmin && (
-            <button className="btn primary btn-edit-wide" onClick={onEdit}>
+            <button
+              className="btn primary btn-edit-wide"
+              onClick={() => setShowEditModal(true)}
+            >
               <SquarePen size={16} />
               <span>Editar</span>
             </button>
@@ -221,7 +247,7 @@ export default function EquipmentPage({ equipamento, isAdmin, onEdit }) {
         {activeTab === "Geral" && (
           <GeralTab
             data={{
-              ...equipamento,
+              ...equipamentoLocal,
               status: statusAtual,
               responsavel: responsavelAtual,
               setor: setorAtual,
@@ -232,13 +258,20 @@ export default function EquipmentPage({ equipamento, isAdmin, onEdit }) {
           />
         )}
         {activeTab === "Hardware" && (
-          <HardwareTab data={equipamento} inventario={inventario} />
+          <HardwareTab data={equipamentoLocal} inventario={inventario} />
         )}
         {activeTab === "Windows" && (
-          <WindowsTab data={equipamento} inventario={inventario} />
+          <WindowsTab data={equipamentoLocal} inventario={inventario} />
         )}
-        {activeTab === "Patrimônios" && <PatrimoniosTab data={equipamento} />}
-        {activeTab === "Acessórios" && <AcessoriosTab data={equipamento} />}
+        {activeTab === "Patrimônios" && (
+          <PatrimoniosTab data={equipamentoLocal} />
+        )}
+        {activeTab === "Documentos" && (
+          <DocumentosTab equipamentoId={equipamentoLocal.id} />
+        )}
+        {activeTab === "Acessórios" && (
+          <AcessoriosTab data={equipamentoLocal} />
+        )}
         {activeTab === "Histórico" && (
           <HistoricoTab
             historico={historico}
@@ -247,6 +280,15 @@ export default function EquipmentPage({ equipamento, isAdmin, onEdit }) {
           />
         )}
       </div>
+
+      {/* MODAL DE EDIÇÃO */}
+      {showEditModal && (
+        <EditEquipamentoModal
+          equipamento={equipamentoLocal}
+          onClose={() => setShowEditModal(false)}
+          onSaved={handleEditSaved}
+        />
+      )}
     </div>
   );
 }
@@ -274,7 +316,6 @@ function StatusIndicator({ status }) {
 }
 
 // ===== Ícone padronizado dentro de círculo azul =====
-// Usado por Status e Setor para ficarem visualmente iguais ao Responsável (Avatar)
 function PillIconCircle({ children }) {
   return <div className="pill-icon-circle">{children}</div>;
 }
@@ -372,7 +413,7 @@ function SetorDropdown({ setor, onChange, editable }) {
         disabled={!editable}
       >
         <PillIconCircle>
-          <Building2 size={14} className="text-white" />
+          <Building2 size={24} className="text-white" />
         </PillIconCircle>
         <div>
           <div className="pill-value">{setor || "-"}</div>
@@ -420,7 +461,6 @@ function ResponsavelAutocomplete({ responsavel, onChange, editable }) {
     setValor(responsavel || "");
   }, [responsavel]);
 
-  // Busca todos os responsáveis distintos já cadastrados (uma vez, ao abrir a edição)
   useEffect(() => {
     if (!editing) return;
 
@@ -455,7 +495,6 @@ function ResponsavelAutocomplete({ responsavel, onChange, editable }) {
     };
   }, [editing]);
 
-  // Filtra as sugestões conforme o usuário digita
   useEffect(() => {
     if (!editing) return;
 
@@ -642,7 +681,7 @@ function StatusBadge({
   );
 }
 
-// Card dedicado ao Antivírus — ícone grande à esquerda + título/subtítulo à direita
+// Card dedicado ao Antivírus
 function AntivirusCard({ ativo, nome }) {
   return (
     <div className={`status-card ${ativo ? "is-ok" : "is-danger"}`}>
@@ -711,6 +750,8 @@ function UptimeCard({ uptimeHoras }) {
 
   if (uptimeHoras == null) return null;
 
+  const LIMITE_SEGUNDOS = 7 * 86400;
+
   const totalSegundos = Math.floor(uptimeHoras * 3600) + segundosDecorridos;
 
   const dias = Math.floor(totalSegundos / 86400);
@@ -722,18 +763,32 @@ function UptimeCard({ uptimeHoras }) {
 
   const excedeSeteDias = dias >= 7;
 
+  const progresso = Math.min((totalSegundos / LIMITE_SEGUNDOS) * 100, 100);
+
   const tempoFormatado =
     dias > 0
       ? `${dias}d ${pad(horas)}h ${pad(minutos)}m ${pad(segundos)}s`
       : `${pad(horas)}h ${pad(minutos)}m ${pad(segundos)}s`;
 
   return (
-    <div className={`status-card ${excedeSeteDias ? "is-warning" : "is-ok"}`}>
+    <div
+      className={`status-card uptime-card ${excedeSeteDias ? "is-warning" : "is-ok"}`}
+    >
       <div className="status-card-text">
         <h3 className="status-card-title">Tempo de Atividade</h3>
         <span className="status-card-subtitle uptime-counter">
           {tempoFormatado}
         </span>
+
+        <div className="uptime-progress-bar">
+          <div
+            className={`uptime-progress-fill ${
+              excedeSeteDias ? "is-danger" : "is-ok"
+            }`}
+            style={{ width: `${progresso}%` }}
+          />
+        </div>
+
         <span
           className={`uptime-status-label ${
             excedeSeteDias ? "text-warning" : "text-success"
@@ -767,17 +822,31 @@ function GeralTab({ data, inventario }) {
       )}
 
       {data.hostname && <FirewallCard ativo={data.firewall_ativo} />}
-
+      {uptimeHoras != null && <UptimeCard uptimeHoras={uptimeHoras} />}
       <Card title="Informações Gerais">
-        <InfoItem label="Responsável" value={data.responsavel} />
-        <InfoItem label="Setor" value={data.setor} />
         <InfoItem label="Dispositivo" value={data.dispositivo} />
         <InfoItem label="Modelo" value={data.modelo} />
         <InfoItem label="Posse" value={data.posse} />
       </Card>
+    </div>
+  );
+}
 
-      {uptimeHoras != null && <UptimeCard uptimeHoras={uptimeHoras} />}
+// ===== Card individual de Patrimônio =====
+function PatrimonioCard({ titulo, numero, icon: Icon }) {
+  return (
+    <div className="patrimonio-card">
+      <div className="patrimonio-card-icon-area">
+        <Icon size={64} className="patrimonio-card-icon" strokeWidth={1.5} />
+      </div>
 
+      <div className="patrimonio-card-footer">
+        <div className="patrimonio-card-info">
+          <span className="patrimonio-card-title">{titulo}</span>
+          <span className="patrimonio-card-subtitle">Patrimônio</span>
+        </div>
+        <span className="patrimonio-card-numero">{numero || "-"}</span>
+      </div>
     </div>
   );
 }
@@ -864,33 +933,25 @@ function WindowsTab({ data, inventario }) {
     /^(Microsoft Windows \d+)\s+(.+?)\s+(\d+\.\d+\.\d+)$/,
   );
 
-  const titulo = match ? match[1] : versaoCompleta;
   const edicao = match ? match[2] : "-";
   const build = match ? match[3] : "-";
 
   const dataInstalacaoBruta =
     sis?.install_date || data.data_instalacao_windows || null;
-  const dataInstalacao = dataInstalacaoBruta
-    ? formatarDataBR(dataInstalacaoBruta)
-    : "-";
 
-  const chaveLicenca = sis?.license_key || data.chave_licenca_windows || "-";
+  const chaveLicenca = sis?.license_key || data.chave_licenca_windows || null;
+  const serial = data.numero_serie || null;
 
   return (
     <div className="cards-grid">
-      <Card span>
-        <div className="windows-card-header">
-          <WindowsIcon size={40} color="#ffffff" />
-          <h3 className="windows-card-title">{titulo}</h3>
-        </div>
-
-        <div className="windows-info-grid">
-          <InfoItem label="Edição" value={edicao} />
-          <InfoItem label="Compilação" value={build} />
-          <InfoItem label="Data de Instalação" value={dataInstalacao} />
-          <InfoItem label="Chave da Licença" value={chaveLicenca} />
-        </div>
-      </Card>
+      <WindowsLicenseCard
+        edicao={edicao}
+        build={build}
+        instaladoEm={dataInstalacaoBruta}
+        chaveLicenca={chaveLicenca}
+        serial={serial}
+        ativado={data.windows_ativado}
+      />
     </div>
   );
 }
@@ -902,16 +963,275 @@ function formatarDataBR(isoDate) {
 }
 
 function PatrimoniosTab({ data }) {
+  const patrimonios = [
+    {
+      titulo: "Dispositivo",
+      numero: data.patrimonio_dispositivo,
+      icon: MonitorSpeaker,
+    },
+    {
+      titulo: "Carregador",
+      numero: data.patrimonio_carregador,
+      icon: Cable,
+    },
+    {
+      titulo: "Monitor",
+      numero: data.patrimonio_monitor,
+      icon: Monitor,
+    },
+    {
+      titulo: "Leitor Biométrico",
+      numero: data.patrimonio_leitor_biometrico,
+      icon: Fingerprint,
+    },
+  ];
+
+  return (
+    <div className="patrimonios-grid">
+      {patrimonios.map((item) => (
+        <PatrimonioCard
+          key={item.titulo}
+          titulo={item.titulo}
+          numero={item.numero}
+          icon={item.icon}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ================================================================
+   ===== ABA DOCUMENTOS — NOVA IMPLEMENTAÇÃO (drag&drop + tabela) =====
+   ================================================================ */
+
+function getFileTypeInfo(nomeArquivo) {
+  const ext = nomeArquivo.split(".").pop()?.toLowerCase() || "";
+
+  const map = {
+    pdf: { label: "PDF", icon: FileText },
+    zip: { label: "ZIP", icon: FileArchive },
+    rar: { label: "RAR", icon: FileArchive },
+    xlsx: { label: "XLSX", icon: FileSpreadsheet },
+    xls: { label: "XLS", icon: FileSpreadsheet },
+    csv: { label: "CSV", icon: FileSpreadsheet },
+    mp3: { label: "MP3", icon: Music },
+    wav: { label: "WAV", icon: Music },
+    mp4: { label: "MP4", icon: Video },
+    mov: { label: "MOV", icon: Video },
+    jpg: { label: "JPG", icon: FileImage },
+    jpeg: { label: "JPEG", icon: FileImage },
+    png: { label: "PNG", icon: FileImage },
+  };
+
+  return map[ext] || { label: ext.toUpperCase() || "FILE", icon: FileText };
+}
+
+function formatFileSize(bytes) {
+  if (!bytes || bytes === 0) return "0 byte";
+  const k = 1024;
+  const sizes = ["byte", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(0))} ${sizes[i]}`;
+}
+
+function DocumentosTab({ equipamentoId }) {
+  const [documentos, setDocumentos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [erro, setErro] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    fetchDocumentos();
+  }, [equipamentoId]);
+
+  async function fetchDocumentos() {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("documentos_equipamento")
+      .select("*")
+      .eq("equipamento_id", equipamentoId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Erro ao buscar documentos:", error);
+      setErro("Não foi possível carregar os documentos.");
+    } else {
+      setDocumentos(data || []);
+    }
+    setLoading(false);
+  }
+
+  async function uploadFile(file) {
+    setUploading(true);
+    setErro(null);
+
+    try {
+      const extensao = file.name.split(".").pop();
+      const nomeArquivo = `${equipamentoId}/${Date.now()}.${extensao}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("documentos")
+        .upload(nomeArquivo, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("documentos")
+        .getPublicUrl(nomeArquivo);
+
+      const { error: insertError } = await supabase
+        .from("documentos_equipamento")
+        .insert({
+          equipamento_id: equipamentoId,
+          nome_arquivo: file.name,
+          caminho_storage: nomeArquivo,
+          tamanho_bytes: file.size,
+          url: urlData.publicUrl,
+        });
+
+      if (insertError) throw insertError;
+
+      await fetchDocumentos();
+    } catch (err) {
+      console.error("Erro ao enviar documento:", err);
+      setErro("Erro ao enviar o documento. Tente novamente.");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function handleFileChange(e) {
+    const files = Array.from(e.target.files || []);
+    files.forEach(uploadFile);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files || []);
+    files.forEach(uploadFile);
+  }
+
+  async function handleDelete(doc) {
+    if (!window.confirm(`Remover o documento "${doc.nome_arquivo}"?`)) return;
+
+    const { error: storageError } = await supabase.storage
+      .from("documentos")
+      .remove([doc.caminho_storage]);
+
+    if (storageError) {
+      console.error("Erro ao remover do storage:", storageError);
+    }
+
+    const { error: deleteError } = await supabase
+      .from("documentos_equipamento")
+      .delete()
+      .eq("id", doc.id);
+
+    if (deleteError) {
+      console.error("Erro ao remover registro:", deleteError);
+      setErro("Não foi possível remover o documento.");
+      return;
+    }
+
+    setDocumentos((prev) => prev.filter((d) => d.id !== doc.id));
+  }
+
+  function handleDownload(doc) {
+    window.open(doc.url, "_blank");
+  }
+
   return (
     <div className="cards-grid">
-      <Card title="Patrimônios" span>
-        <InfoItem label="Dispositivo" value={data.patrimonio_dispositivo} />
-        <InfoItem label="Carregador" value={data.patrimonio_carregador} />
-        <InfoItem label="Monitor" value={data.patrimonio_monitor} />
-        <InfoItem
-          label="Leitor Biométrico"
-          value={data.patrimonio_leitor_biometrico}
-        />
+      <Card title="Área de Upload" span>
+        <div
+          className={`upload-dropzone ${isDragging ? "is-dragging" : ""}`}
+          onDragEnter={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragOver={(e) => e.preventDefault()}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleDrop}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept=".pdf,.jpg,.jpeg,.png,.zip,.rar,.xlsx,.xls,.csv,.mp3,.mp4"
+            onChange={handleFileChange}
+            disabled={uploading}
+            className="documentos-input-hidden"
+          />
+          <UploadCloud size={36} className="upload-dropzone-icon" />
+          <p className="upload-dropzone-title">
+            {uploading
+              ? "Enviando arquivo..."
+              : "Arraste e solte ou clique para enviar"}
+          </p>
+          <p className="upload-dropzone-subtitle">
+            PDF, ZIP, XLSX, MP3, MP4, JPG, PNG — até 50 MB
+          </p>
+        </div>
+
+        {erro && <span className="error">{erro}</span>}
+      </Card>
+
+      <Card title={`Files (${documentos.length})`} span>
+        {loading ? (
+          <p className="info-empty">Carregando documentos...</p>
+        ) : documentos.length === 0 ? (
+          <p className="info-empty">Nenhum documento cadastrado.</p>
+        ) : (
+          <div className="documentos-table">
+            <div className="documentos-table-header">
+              <span>Name</span>
+              <span>Type</span>
+              <span>Size</span>
+              <span>Actions</span>
+            </div>
+
+            {documentos.map((doc) => {
+              const { label, icon: Icon } = getFileTypeInfo(doc.nome_arquivo);
+              return (
+                <div key={doc.id} className="documentos-table-row">
+                  <div className="documentos-table-name">
+                    <Icon size={18} />
+                    <a href={doc.url} target="_blank" rel="noopener noreferrer">
+                      {doc.nome_arquivo}
+                    </a>
+                  </div>
+                  <span className="documentos-table-type">{label}</span>
+                  <span className="documentos-table-size">
+                    {formatFileSize(doc.tamanho_bytes)}
+                  </span>
+                  <div className="documentos-table-actions">
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      onClick={() => handleDownload(doc)}
+                      title="Baixar"
+                    >
+                      <Download size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn documento-delete-btn"
+                      onClick={() => handleDelete(doc)}
+                      title="Remover"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </Card>
     </div>
   );
@@ -1009,4 +1329,187 @@ function formatDateHistorico(date) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+// ===== Modal de Edição (Dispositivo, Patrimônios, Posse, Acessórios) =====
+function EditEquipamentoModal({ equipamento, onClose, onSaved }) {
+  const [form, setForm] = useState({
+    dispositivo: equipamento.dispositivo || "",
+    posse: equipamento.posse || "",
+    patrimonio_dispositivo: equipamento.patrimonio_dispositivo || "",
+    patrimonio_carregador: equipamento.patrimonio_carregador || "",
+    patrimonio_monitor: equipamento.patrimonio_monitor || "",
+    patrimonio_leitor_biometrico:
+      equipamento.patrimonio_leitor_biometrico || "",
+    monitor: !!equipamento.monitor,
+    hub_usb: !!equipamento.hub_usb,
+    webcam: !!equipamento.webcam,
+    leitor_biometrico: !!equipamento.leitor_biometrico,
+    fone: !!equipamento.fone,
+  });
+  const [saving, setSaving] = useState(false);
+  const [erro, setErro] = useState(null);
+
+  function handleChange(e) {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setSaving(true);
+    setErro(null);
+
+    const { error } = await supabase
+      .from("equipamentos")
+      .update(form)
+      .eq("id", equipamento.id);
+
+    setSaving(false);
+
+    if (error) {
+      console.error("Erro ao salvar edição:", error);
+      setErro("Não foi possível salvar as alterações.");
+      return;
+    }
+
+    onSaved(form);
+  }
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2>Editar Equipamento</h2>
+          <button className="modal-close" onClick={onClose} type="button">
+            <X size={18} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="modal-body">
+            {/* Dispositivo */}
+            <div className="modal-section">
+              <h3>Dispositivo</h3>
+              <Dropdown
+                label="Dispositivo *"
+                name="dispositivo"
+                value={form.dispositivo}
+                onChange={handleChange}
+                options={DISPOSITIVOS}
+              />
+            </div>
+
+            {/* Posse */}
+            <div className="modal-section">
+              <h3>Posse</h3>
+              <Dropdown
+                label="Posse"
+                name="posse"
+                value={form.posse}
+                onChange={handleChange}
+                options={POSSES}
+              />
+            </div>
+
+            {/* Patrimônios */}
+            <div className="modal-section">
+              <h3>Patrimônios</h3>
+              <div className="form-grid">
+                <div className="field">
+                  <label>Dispositivo</label>
+                  <input
+                    type="text"
+                    name="patrimonio_dispositivo"
+                    value={form.patrimonio_dispositivo}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="field">
+                  <label>Carregador</label>
+                  <input
+                    type="text"
+                    name="patrimonio_carregador"
+                    value={form.patrimonio_carregador}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="field">
+                  <label>Monitor</label>
+                  <input
+                    type="text"
+                    name="patrimonio_monitor"
+                    value={form.patrimonio_monitor}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="field">
+                  <label>Leitor Biométrico</label>
+                  <input
+                    type="text"
+                    name="patrimonio_leitor_biometrico"
+                    value={form.patrimonio_leitor_biometrico}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Acessórios */}
+            <div className="modal-section">
+              <h3>Acessórios</h3>
+              <div className="toogle-group">
+                <ToogleSwitch
+                  label="Monitor"
+                  checked={form.monitor}
+                  onChange={(val) => setForm({ ...form, monitor: val })}
+                />
+                <ToogleSwitch
+                  label="Hub USB"
+                  checked={form.hub_usb}
+                  onChange={(val) => setForm({ ...form, hub_usb: val })}
+                />
+                <ToogleSwitch
+                  label="Webcam"
+                  checked={form.webcam}
+                  onChange={(val) => setForm({ ...form, webcam: val })}
+                />
+                <ToogleSwitch
+                  label="Leitor Biométrico"
+                  checked={form.leitor_biometrico}
+                  onChange={(val) =>
+                    setForm({ ...form, leitor_biometrico: val })
+                  }
+                />
+                <ToogleSwitch
+                  label="Fone"
+                  checked={form.fone}
+                  onChange={(val) => setForm({ ...form, fone: val })}
+                />
+              </div>
+            </div>
+
+            {erro && <span className="error">{erro}</span>}
+          </div>
+
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn secondary"
+              onClick={onClose}
+              disabled={saving}
+            >
+              Cancelar
+            </button>
+            <button type="submit" className="btn primary" disabled={saving}>
+              {saving ? "Salvando..." : "Salvar"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
