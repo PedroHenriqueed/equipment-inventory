@@ -26,6 +26,10 @@ import {
   Music,
   Video,
   FileImage,
+  Headphones,
+  Usb,
+  Webcam,
+  RotateCcwClock,
 } from "lucide-react";
 import { useInventario } from "../hooks/useInventario"; // ajuste o path se necessário
 import { useHistorico } from "../hooks/useHistorico"; // ajuste o path se necessário
@@ -53,15 +57,19 @@ function WindowsIcon({ size = 16, color = "currentColor" }) {
   );
 }
 
+function resumirProcessador(processadorCompleto) {
+  if (!processadorCompleto) return "-";
+  const match = processadorCompleto.match(/i[3579]-\d{4,5}[A-Z]*/i);
+  return match ? match[0] : processadorCompleto;
+}
+
 // Cada aba agora tem seu ícone
 const TABS = [
   { label: "Geral", icon: Bolt },
   { label: "Hardware", icon: MonitorCog },
-  { label: "Windows", icon: WindowsIcon },
   { label: "Patrimônios", icon: TicketsPlane },
   { label: "Documentos", icon: FileText },
-  { label: "Acessórios", icon: LayoutDashboard },
-  { label: "Histórico", icon: FileText },
+  { label: "Histórico", icon: RotateCcwClock },
 ];
 
 // ===== Configuração das opções de Status =====
@@ -79,7 +87,7 @@ function getStatusColor(status) {
   return found?.color ?? "bg-gray-400";
 }
 
-export default function EquipmentPage({ equipamento, isAdmin, onEdit }) {
+export default function EquipmentPage({ equipamento, isAdmin, onEquipamentoAtualizado }) {
   const [activeTab, setActiveTab] = useState("Geral");
   const [statusAtual, setStatusAtual] = useState(equipamento?.status);
   const [responsavelAtual, setResponsavelAtual] = useState(
@@ -175,11 +183,11 @@ export default function EquipmentPage({ equipamento, isAdmin, onEdit }) {
     }
   }
 
-  function handleEditSaved(camposAtualizados) {
-    setEquipamentoLocal((prev) => ({ ...prev, ...camposAtualizados }));
-    if (onEdit) onEdit(camposAtualizados);
-    setShowEditModal(false);
-  }
+    function handleEditSaved(camposAtualizados) {
+      setEquipamentoLocal((prev) => ({ ...prev, ...camposAtualizados }));
+      onEquipamentoAtualizado?.(camposAtualizados); // não abre modal nenhum
+      setShowEditModal(false);
+    }
 
   return (
     <div className="equipment-page">
@@ -260,17 +268,11 @@ export default function EquipmentPage({ equipamento, isAdmin, onEdit }) {
         {activeTab === "Hardware" && (
           <HardwareTab data={equipamentoLocal} inventario={inventario} />
         )}
-        {activeTab === "Windows" && (
-          <WindowsTab data={equipamentoLocal} inventario={inventario} />
-        )}
         {activeTab === "Patrimônios" && (
           <PatrimoniosTab data={equipamentoLocal} />
         )}
         {activeTab === "Documentos" && (
           <DocumentosTab equipamentoId={equipamentoLocal.id} />
-        )}
-        {activeTab === "Acessórios" && (
-          <AcessoriosTab data={equipamentoLocal} />
         )}
         {activeTab === "Histórico" && (
           <HistoricoTab
@@ -684,25 +686,52 @@ function StatusBadge({
 // Card dedicado ao Antivírus
 function AntivirusCard({ ativo, nome }) {
   return (
-    <div className={`status-card ${ativo ? "is-ok" : "is-danger"}`}>
-      <div className="status-card-text">
-        <h3 className="status-card-title">
-          {ativo
-            ? "O antivírus está habilitado"
-            : "O antivírus está desabilitado"}
-        </h3>
-        <span className="status-card-subtitle">
-          {nome || "Antivírus não identificado"}
-        </span>
-      </div>
+    <div className="antivirus-card">
+      <div className="antivirus-card-topbar" />
 
-      <div className="status-icon-wrapper">
-        <Shield size={40} className="status-card-icon" />
-        {ativo ? (
-          <Check size={16} className="status-badge status-badge-ok" />
-        ) : (
-          <X size={16} className="status-badge status-badge-danger" />
-        )}
+      <div className="antivirus-card-body">
+        <div className="antivirus-card-header">
+          <div className="antivirus-card-header-text">
+            <span className="antivirus-card-label">PROTEÇÃO</span>
+            <h3 className="antivirus-card-title">Antivírus</h3>
+          </div>
+
+          <div className="antivirus-card-shield-wrapper">
+            <Shield
+              size={40}
+              className="antivirus-card-shield-icon"
+              strokeWidth={1.5}
+            />
+            <span
+              className={`antivirus-card-shield-badge ${
+                ativo ? "is-ok" : "is-danger"
+              }`}
+            >
+              {ativo ? <Check size={12} /> : <X size={12} />}
+            </span>
+          </div>
+        </div>
+
+        <hr className="antivirus-card-divider" />
+
+        <div className="antivirus-card-row">
+          <span className="antivirus-card-row-label">Status</span>
+          <span
+            className={`antivirus-card-status-pill ${
+              ativo ? "is-ok" : "is-danger"
+            }`}
+          >
+            {ativo ? <Check size={14} /> : <X size={14} />}
+            {ativo ? "Habilitado" : "Desabilitado"}
+          </span>
+        </div>
+
+        <div className="antivirus-card-row">
+          <span className="antivirus-card-row-label">Software</span>
+          <span className="antivirus-card-row-value">
+            {nome || "Não identificado"}
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -710,27 +739,107 @@ function AntivirusCard({ ativo, nome }) {
 
 function FirewallCard({ ativo }) {
   return (
-    <div className={`status-card ${ativo ? "is-ok" : "is-danger"}`}>
-      <div className="status-card-text">
-        <h3 className="status-card-title">
-          {ativo
-            ? "O firewall está habilitado"
-            : "O firewall está desabilitado"}
-        </h3>
-        <span className="status-card-subtitle">Firewall foi detectado</span>
-      </div>
+    <div className="firewall-card">
+      <div className="firewall-card-topbar" />
 
-      <div className="status-icon-wrapper">
-        <BrickWallShield size={40} className="status-card-icon" />
-        {ativo ? (
-          <Check size={16} className="status-badge status-badge-ok" />
-        ) : (
-          <X size={16} className="status-badge status-badge-danger" />
-        )}
+      <div className="firewall-card-body">
+        <div className="firewall-card-header">
+          <div className="firewall-card-header-text">
+            <span className="firewall-card-label">PROTEÇÃO</span>
+            <h3 className="firewall-card-title">Firewall</h3>
+          </div>
+
+          <div className="firewall-card-shield-wrapper">
+            <BrickWallShield
+              size={40}
+              className="firewall-card-shield-icon"
+              strokeWidth={1.5}
+            />
+            <span
+              className={`firewall-card-shield-badge ${
+                ativo ? "is-ok" : "is-danger"
+              }`}
+            >
+              {ativo ? <Check size={12} /> : <X size={12} />}
+            </span>
+          </div>
+        </div>
+
+        <hr className="firewall-card-divider" />
+
+        <div className="firewall-card-row">
+          <span className="firewall-card-row-label">Status</span>
+          <span
+            className={`firewall-card-status-pill ${
+              ativo ? "is-ok" : "is-danger"
+            }`}
+          >
+            {ativo ? <Check size={14} /> : <X size={14} />}
+            {ativo ? "Habilitado" : "Desabilitado"}
+          </span>
+        </div>
+
+        <div className="firewall-card-row">
+          <span className="firewall-card-row-label">Detecção</span>
+          <span className="firewall-card-row-value">
+            {ativo ? "Firewall ativo" : "Firewall inativo"}
+          </span>
+        </div>
       </div>
     </div>
   );
 }
+
+function InfoGeraisCard({ dispositivo, modelo,processador,numeroSerie, posse }) {
+  return (
+    <div className="infogerais-card">
+      <div className="infogerais-card-topbar" />
+      <div className="infogerais-card-body">
+        <div className="infogerais-card-header">
+          <div className="infogerais-card-header-text">
+            <span className="infogerais-card-label">DISPOSITIVO</span>
+            <h3 className="infogerais-card-title">Informações Gerais</h3>
+          </div>
+          <div className="infogerais-card-icon-wrapper">
+            <Laptop
+              size={36}
+              className="infogerais-card-icon"
+              strokeWidth={1.5}
+            />
+          </div>
+        </div>
+        <hr className="infogerais-card-divider" />
+        <div className="infogerais-card-row">
+          <span className="infogerais-card-row-label">Dispositivo</span>
+          <span className="infogerais-card-row-value">
+            {dispositivo || "-"}
+          </span>
+        </div>
+        <div className="infogerais-card-row">
+          <span className="infogerais-card-row-label">Modelo</span>
+          <span className="infogerais-card-row-value">{modelo || "-"}</span>
+        </div>
+                <div className="infogerais-card-row">
+          <span className="infogerais-card-row-label">Processador</span>
+          <span className="infogerais-card-row-value">{processador || "-"}</span>
+        </div>
+        <div className="infogerais-card-row">
+          <span className="infogerais-card-row-label">Nº de Série</span>
+          <span className="infogerais-card-row-value">
+            {numeroSerie || "-"}
+          </span>
+        </div>
+                <div className="infogerais-card-row">
+          <span className="infogerais-card-row-label">Posse</span>
+          <span className="infogerais-card-posse-value">{posse || "-"}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
 
 // ===== Card de Tempo de Atividade (Uptime) =====
 function UptimeCard({ uptimeHoras }) {
@@ -750,35 +859,47 @@ function UptimeCard({ uptimeHoras }) {
 
   if (uptimeHoras == null) return null;
 
-  const LIMITE_SEGUNDOS = 7 * 86400;
+  const LIMITE_SEGUNDOS = 14 * 86400;
 
   const totalSegundos = Math.floor(uptimeHoras * 3600) + segundosDecorridos;
 
   const dias = Math.floor(totalSegundos / 86400);
   const horas = Math.floor((totalSegundos % 86400) / 3600);
   const minutos = Math.floor((totalSegundos % 3600) / 60);
-  const segundos = totalSegundos % 60;
-
-  const pad = (n) => String(n).padStart(2, "0");
 
   const excedeSeteDias = dias >= 7;
 
   const progresso = Math.min((totalSegundos / LIMITE_SEGUNDOS) * 100, 100);
 
   const tempoFormatado =
-    dias > 0
-      ? `${dias}d ${pad(horas)}h ${pad(minutos)}m ${pad(segundos)}s`
-      : `${pad(horas)}h ${pad(minutos)}m ${pad(segundos)}s`;
+    dias > 0 ? `${dias}d ${horas}h ${minutos}m` : `${horas}h ${minutos}m`;
 
   return (
-    <div
-      className={`status-card uptime-card ${excedeSeteDias ? "is-warning" : "is-ok"}`}
-    >
-      <div className="status-card-text">
-        <h3 className="status-card-title">Tempo de Atividade</h3>
-        <span className="status-card-subtitle uptime-counter">
-          {tempoFormatado}
-        </span>
+    <div className="uptime-card">
+      <div className="uptime-card-topbar" />
+
+      <div className="uptime-card-body">
+        <div className="uptime-card-header">
+          <div className="uptime-card-header-text">
+            <span className="uptime-card-label">SISTEMA</span>
+            <h3 className="uptime-card-title">Tempo de Atividade</h3>
+          </div>
+
+          <div className="uptime-card-clock-wrapper">
+            <RotateCcwClock
+              size={22}
+              className="uptime-card-clock-icon"
+              strokeWidth={1.5}
+            />
+          </div>
+        </div>
+
+        <hr className="uptime-card-divider" />
+
+        <div className="uptime-card-row">
+          <span className="uptime-card-row-label">Em execução</span>
+          <span className="uptime-card-time-value">{tempoFormatado}</span>
+        </div>
 
         <div className="uptime-progress-bar">
           <div
@@ -789,51 +910,99 @@ function UptimeCard({ uptimeHoras }) {
           />
         </div>
 
-        <span
-          className={`uptime-status-label ${
-            excedeSeteDias ? "text-warning" : "text-success"
-          }`}
-        >
-          {excedeSeteDias ? "Reinicialização recomendada" : "Desempenho ideal"}
-        </span>
-      </div>
+        <div className="uptime-progress-scale">
+          <span>0</span>
+          <span>7d</span>
+          <span>14d</span>
+        </div>
 
-      <div className="status-icon-wrapper">
-        {excedeSeteDias ? (
-          <TriangleAlert size={40} className="status-card-icon text-warning" />
-        ) : (
-          <CircleCheckBig size={40} className="status-card-icon text-success" />
-        )}
+        <div className="uptime-card-row uptime-card-row-condicao">
+          <span className="uptime-card-row-label">Condição</span>
+          <span
+            className={`uptime-card-status-pill ${
+              excedeSeteDias ? "is-danger" : "is-ok"
+            }`}
+          >
+            {excedeSeteDias
+              ? "Reinicialização recomendada"
+              : "Desempenho ideal"}
+          </span>
+        </div>
       </div>
     </div>
   );
 }
+
 
 function GeralTab({ data, inventario }) {
   const uptimeHoras =
     inventario?.sistema?.uptime_hours ?? data.uptime_horas ?? null;
-  return (
-    <div className="cards-grid">
-      {data.hostname && (
-        <AntivirusCard
-          ativo={data.antivirus_ativo}
-          nome={data.antivirus_name}
-        />
-      )}
 
-      {data.hostname && <FirewallCard ativo={data.firewall_ativo} />}
-      {uptimeHoras != null && <UptimeCard uptimeHoras={uptimeHoras} />}
-      <Card title="Informações Gerais">
-        <InfoItem label="Dispositivo" value={data.dispositivo} />
-        <InfoItem label="Modelo" value={data.modelo} />
-        <InfoItem label="Posse" value={data.posse} />
-      </Card>
+  const hw = inventario?.hardware;
+  const sis = inventario?.sistema;
+
+  const versaoCompleta =
+    sis?.os_version || data.sistema_operacional || "Não identificado";
+
+  const match = versaoCompleta.match(
+    /^(Microsoft Windows \d+)\s+(.+?)\s+(\d+\.\d+\.\d+)$/,
+  );
+  const processadorResumido = resumirProcessador(
+    hw?.cpu_model || data.processador,
+  );
+  const edicaoWindows = match ? match[2] : "-";
+  const buildWindows = match ? match[3] : "-";
+
+  const dataInstalacaoBruta =
+    sis?.install_date || data.data_instalacao_windows || null;
+
+  const chaveLicenca = sis?.license_key || data.chave_licenca_windows || null;
+  const serial = data.numero_serie || null;
+
+  return (
+    <div className="geral-tab-layout">
+      {/* Coluna esquerda: Info Gerais + Windows */}
+      <div className="geral-tab-col-left">
+        <InfoGeraisCard
+          dispositivo={data.dispositivo}
+          modelo={data.modelo}
+          processador={processadorResumido}
+          numeroSerie={hw?.numero_serie || data.numero_serie}
+          posse={data.posse}
+        />
+
+        <WindowsLicenseCard
+          edicao={edicaoWindows}
+          build={buildWindows}
+          instaladoEm={dataInstalacaoBruta}
+          chaveLicenca={chaveLicenca}
+          serial={serial}
+          ativado={data.windows_ativado}
+        />
+      </div>
+
+      {/* Coluna direita: Tempo de Atividade + (Antivírus + Firewall) */}
+      <div className="geral-tab-col-right">
+        {uptimeHoras != null && <UptimeCard uptimeHoras={uptimeHoras} />}
+
+        <div className="geral-tab-row-av-fw">
+          {data.hostname && (
+            <AntivirusCard
+              ativo={data.antivirus_ativo}
+              nome={data.antivirus_name}
+            />
+          )}
+
+          {data.hostname && <FirewallCard ativo={data.firewall_ativo} />}
+        </div>
+      </div>
     </div>
   );
 }
 
+
 // ===== Card individual de Patrimônio =====
-function PatrimonioCard({ titulo, numero, icon: Icon }) {
+function PatrimonioCard({ titulo, numero, icon: Icon, possui }) {
   return (
     <div className="patrimonio-card">
       <div className="patrimonio-card-icon-area">
@@ -841,11 +1010,25 @@ function PatrimonioCard({ titulo, numero, icon: Icon }) {
       </div>
 
       <div className="patrimonio-card-footer">
-        <div className="patrimonio-card-info">
-          <span className="patrimonio-card-title">{titulo}</span>
+        <span className="patrimonio-card-title">{titulo}</span>
+
+        <div className="patrimonio-card-row">
           <span className="patrimonio-card-subtitle">Patrimônio</span>
+          <span className="patrimonio-card-numero">{numero || "-"}</span>
         </div>
-        <span className="patrimonio-card-numero">{numero || "-"}</span>
+
+        {possui !== undefined && (
+          <div className="patrimonio-card-row">
+            <span className="patrimonio-card-subtitle">Possui</span>
+            <span
+              className={`patrimonio-card-possui ${
+                possui ? "is-sim" : "is-nao"
+              }`}
+            >
+              {possui ? "Sim" : "Não"}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -978,11 +1161,31 @@ function PatrimoniosTab({ data }) {
       titulo: "Monitor",
       numero: data.patrimonio_monitor,
       icon: Monitor,
+      possui: !!data.monitor,
     },
     {
       titulo: "Leitor Biométrico",
       numero: data.patrimonio_leitor_biometrico,
       icon: Fingerprint,
+      possui: !!data.leitor_biometrico,
+    },
+    {
+      titulo: "Fone",
+      numero: data.patrimonio_fone,
+      icon: Headphones,
+      possui: !!data.fone,
+    },
+    {
+      titulo: "Hub USB",
+      numero: data.patrimonio_hub_usb,
+      icon: Usb,
+      possui: !!data.hub_usb,
+    },
+    {
+      titulo: "Webcam",
+      numero: data.patrimonio_webcam,
+      icon: Webcam,
+      possui: !!data.webcam,
     },
   ];
 
@@ -994,12 +1197,12 @@ function PatrimoniosTab({ data }) {
           titulo={item.titulo}
           numero={item.numero}
           icon={item.icon}
+          possui={item.possui}
         />
       ))}
     </div>
   );
 }
-
 /* ================================================================
    ===== ABA DOCUMENTOS — NOVA IMPLEMENTAÇÃO (drag&drop + tabela) =====
    ================================================================ */
@@ -1237,31 +1440,6 @@ function DocumentosTab({ equipamentoId }) {
   );
 }
 
-function AcessoriosTab({ data }) {
-  const items = [
-    { label: "Monitor", active: data.monitor },
-    { label: "Hub USB", active: data.hub_usb },
-    { label: "Webcam", active: data.webcam },
-    { label: "Leitor Biométrico", active: data.leitor_biometrico },
-    { label: "Fone", active: data.fone },
-  ];
-  return (
-    <div className="cards-grid">
-      <Card title="Acessórios" span>
-        <div className="tags-row">
-          {items.map((item) => (
-            <span
-              key={item.label}
-              className={`modal-tag ${item.active ? "active" : "inactive"}`}
-            >
-              {item.active ? <Check size={14} /> : <X size={14} />} {item.label}
-            </span>
-          ))}
-        </div>
-      </Card>
-    </div>
-  );
-}
 
 function HistoricoTab({ historico, loading, error }) {
   if (loading) {

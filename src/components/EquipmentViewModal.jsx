@@ -50,7 +50,7 @@ export default function EquipmentViewModal({
     setSaving(true);
     try {
       await onSalvo(data, equipamento?.id); // id undefined = criar novo
-      setIsEditing(false);
+      onClose();
     } catch (err) {
       if (err?.type !== "duplicate") {
         alert("Erro ao salvar: " + (err.message || "erro desconhecido"));

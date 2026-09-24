@@ -247,7 +247,8 @@ function AppContent() {
                 <EquipmentPageWrapper
                   equipments={equipments}
                   isAdmin={isAdmin}
-                  onEdit={handleEdit}
+                  onEquipamentoAtualizado={(camposAtualizados) => {
+                  }}
                 />
               }
             />

@@ -579,22 +579,80 @@ header h1 {
   gap: 14px;
 }
 
-.info-item {
+.infogerais-card {
+  background: #14161c;
+  border: 1px solid #23262f;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.infogerais-card-topbar {
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+.infogerais-card-body {
+  padding: 8px 18px;
+}
+
+.infogerais-card-header {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-.info-label {
-  font-size: 12px;
-  color: #6b7280;
+.infogerais-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #8a8f9a;
+  text-transform: uppercase;
 }
 
-.info-value {
-  font-size: 14px;
-  color: #f2f2f2;
+.infogerais-card-title {
+  margin-top: 2px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.infogerais-card-icon-wrapper {
+  color: #8a8f9a;
+}
+
+.infogerais-card-divider {
+  border-color: #23262f;
+  margin: 12px 0;
+}
+
+.infogerais-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.infogerais-card-row-label {
+  color: #8a8f9a;
+  font-size: 13px;
+}
+
+.infogerais-card-row-value {
+  color: #fff;
+  font-size: 13px;
   font-weight: 500;
 }
+
+/* Posse sem background, só texto/link estilizado */
+.infogerais-card-posse-value {
+
+  font-size: 13px;
+  font-weight: 600;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
 
 .modal-tags {
   display: flex;
@@ -2887,127 +2945,258 @@ header h1 {
   color: #f87171;
 }
 
+/* ===== Antivirus Card (novo design) ===== */
+/* ===== Antivirus Card (dark theme) ===== */
 .antivirus-card {
+  background: #16181d;
+  border: 1px solid #2a2d34;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
   display: flex;
-  align-items: center;
+  flex-direction: column;
 }
 
-.antivirus-card-content {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+.antivirus-card-topbar {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, #22c55e, #4ade80);
 }
 
-.antivirus-title {
-  margin: 0 0 4px 0;
-  font-size: 1rem;
+.antivirus-card-body {
+  padding: 20px 22px;
+}
+
+.antivirus-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.antivirus-card-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.antivirus-card-label {
+  font-size: 11px;
   font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #7c8290;
+  text-transform: uppercase;
 }
 
-.antivirus-subtitle {
-  font-size: 0.85rem;
-  color: var(--muted-foreground, #9ca3af);
+.antivirus-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
 }
 
-.antivirus-card.av-ok .antivirus-icon {
-  color: #22c55e; /* verde */
-}
-
-.antivirus-card.av-danger .antivirus-icon {
-  color: #ef4444; /* vermelho */
-}
-
-.antivirus-card.av-ok .antivirus-title {
-  color: #22c55e;
-}
-
-.antivirus-card.av-danger .antivirus-title {
-  color: #ef4444;
-}
-
-.firewall-card {
-  display: flex;
-  align-items: center;
-}
-
-.firewall-card-content {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.firewall-icon-wrapper {
+.antivirus-card-shield-wrapper {
   position: relative;
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.firewall-status-icon {
+.antivirus-card-shield-icon {
+  color: #545a66;
+}
+
+.antivirus-card-shield-badge {
   position: absolute;
   bottom: -4px;
   right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  padding: 2px;
-  background: var(--card-bg, #1f1f1f);
+  color: #fff;
+  border: 2px solid #16181d;
 }
 
-.firewall-title {
-  margin: 0;
-  font-size: 1rem;
+.antivirus-card-shield-badge.is-ok {
+  background-color: #22c55e;
+}
+
+.antivirus-card-shield-badge.is-danger {
+  background-color: #ef4444;
+}
+
+.antivirus-card-divider {
+  border: none;
+  border-top: 1px solid #2a2d34;
+  margin: 16px 0;
+}
+
+.antivirus-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.antivirus-card-row-label {
+  font-size: 14px;
+  color: #8a8f9a;
+  font-weight: 500;
+}
+
+.antivirus-card-row-value {
+  font-size: 14px;
+  color: #f1f5f9;
   font-weight: 600;
 }
 
-.firewall-card.fw-ok .firewall-icon {
-  color: #22c55e; /* verde */
+.antivirus-card-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.firewall-card.fw-danger .firewall-icon {
-  color: #ef4444; /* vermelho */
+.antivirus-card-status-pill.is-ok {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
 }
 
-.firewall-card.fw-ok .firewall-title {
-  color: #22c55e;
+.antivirus-card-status-pill.is-danger {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
 }
 
-.firewall-card.fw-danger .firewall-title {
-  color: #ef4444;
+
+/* ===== Firewall Card (dark theme) ===== */
+.firewall-card {
+  background: #16181d;
+  border: 1px solid #2a2d34;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.status-ok {
-  color: #22c55e;
-  background: #052e16;
+.firewall-card-topbar {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, #22c55e, #4ade80);
 }
 
-.status-danger {
-  color: #ef4444;
-  background: #450a0a;
+.firewall-card-body {
+  padding: 20px 22px;
 }
 
-.status-icon-wrapper {
+.firewall-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.firewall-card-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.firewall-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #7c8290;
+  text-transform: uppercase;
+}
+
+.firewall-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.firewall-card-shield-wrapper {
   position: relative;
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.antivirus-icon,
-.firewall-icon {
-  color: #f5f5f5;
+.firewall-card-shield-icon {
+  color: #545a66;
 }
 
-.status-badge-icon {
+.firewall-card-shield-badge {
   position: absolute;
-  bottom: -2px;
-  right: -6px;
+  bottom: -4px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  padding: 2px;
-  background: #1a1a1a;
-  border: 2px solid #1a1a1a;
+  color: #fff;
+  border: 2px solid #16181d;
 }
 
-.status-badge-icon.status-ok {
-  color: #22c55e;
+.firewall-card-shield-badge.is-ok {
+  background-color: #22c55e;
 }
 
-.status-badge-icon.status-danger {
-  color: #ef4444;
+.firewall-card-shield-badge.is-danger {
+  background-color: #ef4444;
+}
+
+.firewall-card-divider {
+  border: none;
+  border-top: 1px solid #2a2d34;
+  margin: 16px 0;
+}
+
+.firewall-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.firewall-card-row-label {
+  font-size: 14px;
+  color: #8a8f9a;
+  font-weight: 500;
+}
+
+.firewall-card-row-value {
+  font-size: 14px;
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+.firewall-card-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.firewall-card-status-pill.is-ok {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.firewall-card-status-pill.is-danger {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
 }
 
 /* Títulos coloridos conforme status */
@@ -3124,16 +3313,148 @@ header h1 {
   font-size: 0.85rem;
   font-weight: 500;
 }
+/* ===== Uptime Card (dark theme) ===== */
 .uptime-card {
-  height: auto !important;
-  min-height: 0;
-  align-self: start; /* impede o grid de estirar o item */
-  padding: 20px 24px;
+  background: #16181d;
+  border: 1px solid #2a2d34;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.uptime-card .status-card-text {
-  gap: 6px;
+.uptime-card-topbar {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, #22c55e, #4ade80);
 }
+
+.uptime-card-body {
+  padding: 20px 22px;
+}
+
+.uptime-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.uptime-card-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.uptime-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #7c8290;
+  text-transform: uppercase;
+}
+
+.uptime-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.uptime-card-clock-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #2a2d34;
+}
+
+.uptime-card-clock-icon {
+  color: #7c8290;
+}
+
+.uptime-card-divider {
+  border: none;
+  border-top: 1px solid #2a2d34;
+  margin: 16px 0;
+}
+
+.uptime-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.uptime-card-row-label {
+  font-size: 14px;
+  color: #8a8f9a;
+  font-weight: 500;
+}
+
+.uptime-card-time-value {
+  font-size: 20px;
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+.uptime-progress-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #2a2d34;
+  overflow: hidden;
+  margin: 10px 0 4px;
+}
+
+.uptime-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.uptime-progress-fill.is-ok {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+.uptime-progress-fill.is-danger {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.uptime-progress-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #5a5f6a;
+  margin-bottom: 12px;
+}
+
+.uptime-card-row-condicao {
+  padding-top: 8px;
+}
+
+.uptime-card-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.uptime-card-status-pill.is-ok {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.uptime-card-status-pill.is-danger {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
 .windows-card-header {
   display: flex;
   align-items: center;
@@ -3584,12 +3905,6 @@ header h1 {
   color: #9ca3af; /* cinza claro */
 }
 
-.patrimonio-card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
 .patrimonio-card-info {
   display: flex;
   flex-direction: column;
@@ -3713,8 +4028,165 @@ header h1 {
   gap: 8px;
   justify-self: end;
 }
+.patrimonio-card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.patrimonio-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.patrimonio-card-possui {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.patrimonio-card-possui.is-sim {
+  color: #22c55e;
+}
+
+.patrimonio-card-possui.is-nao {
+  color: #ef4444;
+}
+.geral-tab-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.geral-tab-left .infogerais-card {
+  width: 100%;
+}
+.geral-tab-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+    max-width: 1300px; /* controla a largura total do conteúdo */
+  margin: 0 auto;
+}
+.geral-tab-row-top .infogerais-card,
+.geral-tab-row-top .uptime-card {
+  min-height: 320px; /* aumenta a altura dos cards */
+}
+.geral-tab-row-top .infogerais-card-body,
+.geral-tab-row-top .uptime-card-body {
+  padding: 28px 26px; /* mais respiro interno */
+}
+.geral-tab-row {
+  display: grid;
+  gap: 16px;
+}
+
+.geral-tab-row-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  justify-content: center;
+  width: 1550px;
+  align-items: stretch;
+}
+
+
+.geral-tab-row-bottom {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+   justify-content: center;
+  align-items: stretch; /* garante mesma altura */
+}
+.geral-tab-row-bottom.centered {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.geral-tab-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.geral-tab-left,
+.geral-tab-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.geral-tab-right-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.geral-tab-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.geral-tab-row-top {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+
+.geral-tab-row-bottom {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .geral-tab-row-top,
+  .geral-tab-row-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 900px) {
+  .geral-tab-layout {
+    grid-template-columns: 1fr;
+  }
+  .geral-tab-right-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 900px) {
+  .geral-tab-row-top,
+  .geral-tab-row-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
+.geral-tab-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.geral-tab-right-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
 
 /*===== Responsivo ===== */
+@media (max-width: 900px) {
+  .geral-tab-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .geral-tab-right-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 600px) {
   .windows-info-grid {
     grid-template-columns: 1fr;
