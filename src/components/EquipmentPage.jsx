@@ -652,9 +652,9 @@ function StatusPill({ label, value, icon }) {
   );
 }
 
-function Card({ title, children, span }) {
+function Card({ title, children, span, className = "" }) {
   return (
-    <div className={`info-card ${span ? "span-full" : ""}`}>
+    <div className={`info-card ${span ? "span-full" : ""} ${className}`}>
       {title && <h3>{title}</h3>}
       {children}
     </div>
@@ -802,7 +802,7 @@ function InfoGeraisCard({ dispositivo, modelo,processador,numeroSerie, posse }) 
           </div>
           <div className="infogerais-card-icon-wrapper">
             <Laptop
-              size={36}
+              size={40}
               className="infogerais-card-icon"
               strokeWidth={1.5}
             />
@@ -887,7 +887,7 @@ function UptimeCard({ uptimeHoras }) {
 
           <div className="uptime-card-clock-wrapper">
             <RotateCcwClock
-              size={22}
+              size={40}
               className="uptime-card-clock-icon"
               strokeWidth={1.5}
             />
@@ -1349,7 +1349,7 @@ function DocumentosTab({ equipamentoId }) {
 
   return (
     <div className="cards-grid">
-      <Card title="Área de Upload" span>
+      <Card title="Área de Upload" span className="documentos-card">
         <div
           className={`upload-dropzone ${isDragging ? "is-dragging" : ""}`}
           onDragEnter={(e) => {
@@ -1384,7 +1384,11 @@ function DocumentosTab({ equipamentoId }) {
         {erro && <span className="error">{erro}</span>}
       </Card>
 
-      <Card title={`Files (${documentos.length})`} span>
+      <Card
+        title={`Files (${documentos.length})`}
+        span
+        className="documentos-card"
+      >
         {loading ? (
           <p className="info-empty">Carregando documentos...</p>
         ) : documentos.length === 0 ? (
@@ -1475,20 +1479,30 @@ function HistoricoTab({ historico, loading, error }) {
   return (
     <div className="cards-grid">
       <Card title="Histórico de Responsáveis" span>
-        <div className="historico-list">
-          {historico.map((item) => (
-            <div key={item.id} className="historico-item">
-              <div className="historico-avatar">
+        <div className="audit-log-list">
+          {historico.map((item, index) => (
+            <div key={item.id} className="audit-log-item">
+              {index < historico.length - 1 && (
+                <div className="audit-log-connector" />
+              )}
+
+              <div className="audit-log-icon">
                 <Avatar name={item.responsavel} />
               </div>
-              <div className="historico-info">
-                <span className="historico-nome">{item.responsavel}</span>
+
+              <div className="audit-log-content">
+                <div className="audit-log-row-top">
+                  <span className="audit-log-actor">
+                    {item.responsavel || "-"}
+                  </span>
+                  <span className="audit-log-time">
+                    {formatDateHistorico(item.data_transferencia)}
+                  </span>
+                </div>
+
                 {item.setor && (
-                  <span className="historico-setor">{item.setor}</span>
+                  <span className="audit-log-badge">{item.setor}</span>
                 )}
-              </div>
-              <div className="historico-data">
-                {formatDateHistorico(item.data_transferencia)}
               </div>
             </div>
           ))}
@@ -1497,6 +1511,7 @@ function HistoricoTab({ historico, loading, error }) {
     </div>
   );
 }
+
 
 function formatDateHistorico(date) {
   if (!date) return "-";
