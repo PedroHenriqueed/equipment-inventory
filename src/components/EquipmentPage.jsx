@@ -139,19 +139,21 @@ export default function EquipmentPage({ equipamento, isAdmin, onEquipamentoAtual
     });
   };
 
-  async function handleStatusChange(novoStatus) {
-    setStatusAtual(novoStatus); // atualização otimista na UI
+async function handleStatusChange(novoStatus) {
+  setStatusAtual(novoStatus); // atualização otimista na UI
 
-    const { error } = await supabase
-      .from("equipamentos")
-      .update({ status: novoStatus })
-      .eq("id", equipamento.id);
+  const { error } = await supabase
+    .from("equipamentos")
+    .update({ status: novoStatus })
+    .eq("id", equipamento.id);
 
-    if (error) {
-      console.error("Erro ao atualizar status:", error);
-      setStatusAtual(equipamento.status); // reverte em caso de erro
-    }
+  if (error) {
+    console.error("Erro ao atualizar status:", error);
+    setStatusAtual(equipamento.status); // reverte em caso de erro
+  } else {
+    onEquipamentoAtualizado?.({ status: novoStatus }); // ✅ avisa o pai
   }
+}
 
   async function handleResponsavelChange(novoResponsavel) {
     const anterior = responsavelAtual;

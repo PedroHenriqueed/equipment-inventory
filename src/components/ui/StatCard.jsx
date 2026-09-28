@@ -10,7 +10,7 @@ export function StatCard({
 
   return (
     <div className={`stat-card stat-card--${color}`}>
- 
+      <div className={`stat-card-decor stat-card-decor--${decor}`} />
 
       <div className="stat-card-header">
         <span className="stat-card-title">{title}</span>

@@ -77,18 +77,6 @@ export default function ActionMenu({ onView, onEdit, onDelete }) {
             <Eye size={18} /> Visualizar
           </button>
 
-          {onEdit && (
-            <button
-              className="action-menu-item"
-              onClick={() => {
-                onEdit(true);
-                setOpen(false);
-              }}
-            >
-              <PenLine size={18} /> Alterar
-            </button>
-          )}
-
           {onDelete && (
             <button
               className="action-menu-item danger"
