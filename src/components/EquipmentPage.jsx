@@ -1586,9 +1586,8 @@ function EditEquipamentoModal({ equipamento, onClose, onSaved }) {
           <div className="modal-body">
             {/* Dispositivo */}
             <div className="modal-section">
-              <h3>Dispositivo</h3>
+              <h3>Dispositivo*</h3>
               <Dropdown
-                label="Dispositivo *"
                 name="dispositivo"
                 value={form.dispositivo}
                 onChange={handleChange}
@@ -1598,9 +1597,8 @@ function EditEquipamentoModal({ equipamento, onClose, onSaved }) {
 
             {/* Posse */}
             <div className="modal-section">
-              <h3>Posse</h3>
+              <h3>Posse*</h3>
               <Dropdown
-                label="Posse"
                 name="posse"
                 value={form.posse}
                 onChange={handleChange}
