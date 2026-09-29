@@ -13,6 +13,8 @@ export default function Dropdown({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
+  const triggerId = `dropdown-${name}`;
+  const labelId = `dropdown-label-${name}`;
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -22,7 +24,6 @@ export default function Dropdown({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // normaliza options: aceita string[] ou { value, label }[]
   const normalizedOptions = options.map((opt) =>
     typeof opt === "string" ? { value: opt, label: opt } : opt,
   );
@@ -30,23 +31,31 @@ export default function Dropdown({
   const selectedOption = normalizedOptions.find((o) => o.value === value);
 
   function handleSelect(optionValue) {
-    // simula evento nativo pra manter compatibilidade com handleChange(e)
     onChange({ target: { name, value: optionValue } });
     setIsOpen(false);
   }
 
   return (
     <div className="dropdown-field">
-      {label && <label className="dropdown-label">{label}</label>}
+      {label && (
+        <label id={labelId} htmlFor={triggerId} className="dropdown-label">
+          {label}
+        </label>
+      )}
 
       <div className="dropdown-wrapper" ref={ref}>
         <button
+          id={triggerId}
           type="button"
           className={`dropdown-trigger ${disabled ? "disabled" : ""} ${
             error ? "has-error" : ""
           }`}
           onClick={() => !disabled && setIsOpen((prev) => !prev)}
           disabled={disabled}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          aria-labelledby={label ? labelId : undefined}
+          aria-invalid={!!error}
         >
           <span className={!selectedOption ? "dropdown-placeholder" : ""}>
             {selectedOption ? selectedOption.label : placeholder}
@@ -58,7 +67,7 @@ export default function Dropdown({
         </button>
 
         {isOpen && !disabled && (
-          <div className="dropdown-menu">
+          <div className="dropdown-menu" role="listbox">
             {normalizedOptions.length === 0 ? (
               <div className="dropdown-empty">Nenhuma opção disponível</div>
             ) : (
@@ -66,6 +75,8 @@ export default function Dropdown({
                 <button
                   key={option.value}
                   type="button"
+                  role="option"
+                  aria-selected={value === option.value}
                   className="dropdown-item"
                   onClick={() => handleSelect(option.value)}
                 >

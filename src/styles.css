@@ -233,9 +233,9 @@ body {
 
 header h1 {
   color: #f2f2f2;
-  font-size: 36px;
+  font-size: 30px;
   margin-bottom: 16px;
-  justify-content: center;
+  justify-content: flex-start;
   display: flex;
 }
 
@@ -251,11 +251,10 @@ header h1 {
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 20px;
   align-items: start;
 }
-
 .field-full {
   grid-column: 1 / -1;
 }
@@ -332,13 +331,21 @@ header h1 {
 }
 
 .form-actions {
-  margin-top: 36px;
-  margin-bottom: 10px;
   display: flex;
-  gap: 10px;
-  justify-content: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
 }
 
+@media (max-width: 600px) {
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
 .btn {
   padding: 8px 16px;
   border-radius: 6px;
@@ -724,7 +731,7 @@ header h1 {
 .toogle-group {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start; 
   align-items: center;
   gap: 24px;
   margin-top: 24px;
@@ -1291,6 +1298,13 @@ header h1 {
 .dropdown-wrapper {
   position: relative;
   width: 100%;
+}
+.dropdown-hint {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 4px;
+  display: block;
+  text-align: center;
 }
 
 .dropdown-trigger {
@@ -2787,9 +2801,10 @@ header h1 {
 }
 .subtitle {
   font-size: 13px;
-  margin-left: 14px;
+  margin-left: 1px;
   color: #999;
   line-height: 1.2;
+  margin-bottom: 16px;
 }
 .btn-back {
   display: none;
@@ -4336,7 +4351,21 @@ header h1 {
   font-size: 0.72rem;
   color: #6b7280;
 }
+.form-grid--limited {
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+}
 
+@media (max-width: 900px) {
+  .form-grid--limited {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 500px) {
+  .form-grid--limited {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 480px) {
   .quick-action {
     padding: 12px;
@@ -4558,6 +4587,24 @@ header h1 {
 .stat-tile .stat-card {
   width: 100%;
 }
+.form-section {
+  margin-bottom: 28px;
+}
+
+.form-section:last-child {
+  margin-bottom: 0;
+}
+
+.form-section-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #9ca3af;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #2a2a2a;
+  padding-bottom: 6px;
+}
+
 
 @media (max-width: 640px) {
   .stat-tile .stat-card {

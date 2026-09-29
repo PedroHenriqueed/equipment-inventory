@@ -5,7 +5,7 @@ import EquipmentForm from "../components/EquipmentForm";
 export default function CadastrarEquipamento({ onSave, onSuccess }) {
   const [saving, setSaving] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
-  const [formKey, setFormKey] = useState(0); 
+  const [formKey, setFormKey] = useState(0);
 
   const handleSave = async (formData) => {
     setSaving(true);
@@ -13,7 +13,7 @@ export default function CadastrarEquipamento({ onSave, onSuccess }) {
     try {
       await onSave(formData);
       toast.success("Equipamento cadastrado com sucesso!");
-      setFormKey((k) => k + 1); 
+      setFormKey((k) => k + 1);
       onSuccess();
     } catch (err) {
       if (err?.type === "duplicate" && err.field?.field) {
@@ -31,7 +31,13 @@ export default function CadastrarEquipamento({ onSave, onSuccess }) {
 
   return (
     <div className="page">
-
+      <header>
+        <h1>Cadastrar Equipamento</h1>
+        <p className="subtitle">
+          Preencha os dados abaixo para registrar um novo equipamento no
+          inventário.
+        </p>
+      </header>
 
       <EquipmentForm
         key={formKey}
