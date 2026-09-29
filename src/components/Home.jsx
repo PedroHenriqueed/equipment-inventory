@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { equipamentosService } from "../services/equipamentosService";
 import EquipmentViewModal from "./EquipmentViewModal";
 import ConfirmDeleteModal from "../components/ui/ConfirmDeleteModal";
 import { StatCard } from "./ui/StatCard";
 import { RankingDonutCard } from "./ui/RankingDonutCard";
+import { Plus, Trash2, MoreVertical, User, Building2, Eraser } from "lucide-react";
 
 export default function Home({ setActiveTab, isAdmin }) {
   const [ultimos, setUltimos] = useState([]);
+  const [carregandoUltimos, setCarregandoUltimos] = useState(true);
+  const [erroUltimos, setErroUltimos] = useState(null);
   const [emManutencao, setEmManutencao] = useState([]);
   const [disponiveis, setDisponiveis] = useState([]);
   const [rankingSetores, setRankingSetores] = useState([]);
@@ -14,25 +17,32 @@ export default function Home({ setActiveTab, isAdmin }) {
   const [modalAberto, setModalAberto] = useState(false);
   const [equipamentoEditando, setEquipamentoEditando] = useState(null);
 
-  // ===== Estado do modal de confirmação de exclusão =====
   const [confirmDelete, setConfirmDelete] = useState({
     open: false,
     equip: null,
   });
 
   async function carregarDados() {
-    const [u, m, d, rs, rq] = await Promise.all([
-      equipamentosService.getUltimosAdicionados(),
-      equipamentosService.getEmManutencao(),
-      equipamentosService.getDisponiveis(),
-      equipamentosService.getRankingPorSetor(),
-      equipamentosService.getRankingQuebrasPorSetor(),
-    ]);
-    setUltimos(u);
-    setEmManutencao(m);
-    setDisponiveis(d);
-    setRankingSetores(rs);
-    setRankingQuebras(rq);
+    setCarregandoUltimos(true);
+    setErroUltimos(null);
+    try {
+      const [u, m, d, rs, rq] = await Promise.all([
+        equipamentosService.getUltimosAdicionados(),
+        equipamentosService.getEmManutencao(),
+        equipamentosService.getDisponiveis(),
+        equipamentosService.getRankingPorSetor(),
+        equipamentosService.getRankingQuebrasPorSetor(),
+      ]);
+      setUltimos(u);
+      setEmManutencao(m);
+      setDisponiveis(d);
+      setRankingSetores(rs);
+      setRankingQuebras(rq);
+    } catch (err) {
+      setErroUltimos("Não foi possível carregar os últimos equipamentos.");
+    } finally {
+      setCarregandoUltimos(false);
+    }
   }
 
   useEffect(() => {
@@ -74,52 +84,82 @@ export default function Home({ setActiveTab, isAdmin }) {
     <div className="home-container">
       <div className="grid-cards">
         {isAdmin && (
-          <Card titulo="Ações Rápidas">
-            <div className="acoes-rapidas">
-              <button className="acao-btn acao-add" onClick={irParaCadastrar}>
-                <span className="acao-icon">+</span>
-                Adicionar Equipamento
-              </button>
-              <button className="acao-btn acao-edit" onClick={irParaVisualizar}>
-                <span className="acao-icon">✎</span>
-                Editar Equipamento
-              </button>
+          <Card titulo="Ações Rápidas" variante="acoes-rapidas">
+            <div className="quick-actions-panel">
               <button
-                className="acao-btn acao-delete"
+                type="button"
+                className="quick-action quick-action-primary"
+                onClick={irParaCadastrar}
+              >
+                <span className="quick-action-icon" aria-hidden="true">
+                  <Plus size={18} strokeWidth={2.5} />
+                </span>
+                <span className="quick-action-text">
+                  <strong>Adicionar equipamento</strong>
+                  <span>Cadastrar uma nova máquina no inventário</span>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="quick-action quick-action-secondary"
                 onClick={irParaVisualizar}
               >
-                <span className="acao-icon">🗑</span>
-                Excluir Equipamento
+                <span className="quick-action-icon" aria-hidden="true">
+                  <Trash2 size={16} strokeWidth={2} />
+                </span>
+                <span className="quick-action-text">
+                  <span className="quick-action-secondary-title">
+                    Excluir equipamento
+                  </span>
+                  <span className="quick-action-secondary-desc">
+                    Selecionar e confirmar remoção
+                  </span>
+                </span>
               </button>
             </div>
           </Card>
         )}
 
-        <Card titulo="Últimos Adicionados">
-          {ultimos.map((e) => (
-            <EquipamentoLinha
-              key={e.id}
-              equip={e}
-              isAdmin={isAdmin}
-              onEditar={abrirModalEditar}
-              onExcluir={pedirExclusao}
-            />
-          ))}
+        <Card
+          titulo="Últimos Adicionados"
+          variante="ultimos-adicionados"
+          acao={
+            <button
+              type="button"
+              className="ver-todos-btn"
+              onClick={irParaVisualizar}
+            >
+              Ver todos
+            </button>
+          }
+        >
+          <UltimosAdicionadosLista
+            itens={ultimos}
+            carregando={carregandoUltimos}
+            erro={erroUltimos}
+            isAdmin={isAdmin}
+            onExcluir={pedirExclusao}
+          />
         </Card>
 
-        <StatCard
-          title="Em Manutenção"
-          value={emManutencao.length}
-          color="blue"
-          decor="rects"
-        />
+        <div className="stat-tile stat-tile--manutencao">
+          <StatCard
+            title="Em Manutenção"
+            value={emManutencao.length}
+            color="blue"
+            decor="rects"
+          />
+        </div>
 
-        <StatCard
-          title="Máquinas Disponíveis"
-          value={disponiveis.length}
-          color="blue"
-          decor="circles"
-        />
+        <div className="stat-tile stat-tile--disponiveis">
+          <StatCard
+            title="Máquinas Disponíveis"
+            value={disponiveis.length}
+            color="blue"
+            decor="circles"
+          />
+        </div>
 
         <RankingDonutCard
           titulo="Máquinas por Setor"
@@ -129,7 +169,7 @@ export default function Home({ setActiveTab, isAdmin }) {
         />
 
         <RankingDonutCard
-          titulo="Setores que Mais Quebram"
+          titulo="Setores com Mais Manutenção"
           dados={rankingQuebras}
           campoLabel="setor"
           campoValor="total_quebras"
@@ -163,32 +203,141 @@ export default function Home({ setActiveTab, isAdmin }) {
   );
 }
 
-function Card({ titulo, children }) {
+function Card({ titulo, acao,variante,children }) {
   return (
-    <div className="card">
-      <h2>{titulo}</h2>
+    <div className={`card${variante ? ` card--${variante}` : ""}`}>
+      <div className="card-header-row">
+        <h2>{titulo}</h2>
+        {acao}
+      </div>
       <div className="card-content">{children}</div>
     </div>
   );
 }
 
-function EquipamentoLinha({ equip, isAdmin, onEditar, onExcluir }) {
+function UltimosAdicionadosLista({
+  itens,
+  carregando,
+  erro,
+  isAdmin,
+  onExcluir,
+}) {
+  if (carregando) {
+    return (
+      <div className="skeleton-list" aria-live="polite" aria-busy="true">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="skeleton-row">
+            <div
+              className="skeleton skeleton-card"
+              style={{ width: "100%", height: 48 }}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (erro) {
+    return (
+      <p className="empty-state" role="alert">
+        {erro}
+      </p>
+    );
+  }
+
+  if (!itens || itens.length === 0) {
+    return (
+      <p className="empty-state">Nenhum equipamento cadastrado recentemente.</p>
+    );
+  }
+
+  const exibidos = itens.slice(0, 5);
+
   return (
-    <div className="equip-linha">
-      <span>
-        <strong>{equip.modelo}</strong> -- {equip.processador} --{" "}
-        {equip.responsavel} ({equip.setor || "sem setor"})
-      </span>
+    <ul className="ultimos-lista">
+      {exibidos.map((equip) => (
+        <UltimoItem
+          key={equip.id}
+          equip={equip}
+          isAdmin={isAdmin}
+          onExcluir={onExcluir}
+        />
+      ))}
+    </ul>
+  );
+}
+
+function UltimoItem({ equip, isAdmin, onExcluir }) {
+  const [menuAberto, setMenuAberto] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!menuAberto) return;
+
+    function handleClickFora(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuAberto(false);
+      }
+    }
+    function handleEsc(e) {
+      if (e.key === "Escape") setMenuAberto(false);
+    }
+
+    document.addEventListener("mousedown", handleClickFora);
+    document.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("mousedown", handleClickFora);
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [menuAberto]);
+
+  return (
+    <li className="ultimo-item">
+      <div className="ultimo-item-main">
+        <span className="ultimo-item-modelo">{equip.modelo}</span>
+        <div className="ultimo-item-meta">
+          <span className="ultimo-item-meta-item">
+            <User size={12} aria-hidden="true" />
+            {equip.responsavel}
+          </span>
+          <span className="ultimo-item-meta-item">
+            <Building2 size={12} aria-hidden="true" />
+            {equip.setor || "Sem setor"}
+          </span>
+        </div>
+      </div>
+
       {isAdmin && (
-        <div className="equip-linha-acoes">
-          <button onClick={() => onEditar(equip)} aria-label="Editar">
-            ✎
+        <div className="action-menu" ref={menuRef}>
+          <button
+            type="button"
+            className="action-menu-trigger"
+            aria-haspopup="true"
+            aria-expanded={menuAberto}
+            aria-label={`Mais ações para ${equip.modelo}`}
+            onClick={() => setMenuAberto((v) => !v)}
+          >
+            <MoreVertical size={16} />
           </button>
-          <button onClick={() => onExcluir(equip)} aria-label="Excluir">
-            🗑
-          </button>
+
+          {menuAberto && (
+            <div className="action-menu-dropdown" role="menu">
+              <button
+                type="button"
+                role="menuitem"
+                className="action-menu-item danger"
+                onClick={() => {
+                  setMenuAberto(false);
+                  onExcluir(equip);
+                }}
+              >
+                <Eraser size={18} aria-hidden="true" />
+                Deletar
+              </button>
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </li>
   );
 }

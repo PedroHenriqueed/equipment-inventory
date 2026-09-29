@@ -1667,10 +1667,13 @@ header h1 {
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 0.9rem;
+  height: 160px;
 }
 
 .equip-linha span {
   color: #e5e7eb;
+  display: flex;
+  gap:6px;
 }
 
 .equip-linha .acoes {
@@ -4219,6 +4222,351 @@ header h1 {
   background-position: 90% 10%, 100% 70%;
   background-repeat: no-repeat;
 }
+/* ===== Ações Rápidas (painel único, hierarquizado) ===== */
+.quick-actions-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.quick-action:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Ação principal: sólida, evidente, primeiro plano visual */
+.quick-action-primary {
+  background: #1d4ed8;
+  border: 1px solid #1d4ed8;
+  color: #fff;
+  padding: 14px 16px;
+}
+
+.quick-action-primary:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.quick-action-primary:active {
+  background: #1e40af;
+}
+
+.quick-action-primary .quick-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.quick-action-primary .quick-action-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quick-action-primary .quick-action-text strong {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.quick-action-primary .quick-action-text span:last-child {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Ação secundária: discreta, sóbria, tom de perigo apenas no hover */
+.quick-action-secondary {
+  background: transparent;
+  border: 1px solid #262626;
+  color: #9ca3af;
+  padding: 10px 14px;
+}
+
+.quick-action-secondary:hover {
+  border-color: #7f1d1d;
+  color: #f87171;
+  background: rgba(127, 29, 29, 0.08);
+}
+
+.quick-action-secondary:active {
+  background: rgba(127, 29, 29, 0.14);
+}
+
+.quick-action-secondary .quick-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.quick-action-secondary .quick-action-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.quick-action-secondary-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: inherit;
+}
+
+.quick-action-secondary-desc {
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+@media (max-width: 480px) {
+  .quick-action {
+    padding: 12px;
+  }
+
+  .quick-action-primary,
+  .quick-action-secondary {
+    padding: 12px 14px;
+  }
+}
+/* ===== Card header com ação opcional (Ver todos) ===== */
+.card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #2a2a2a;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.card-header-row h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.ver-todos-btn {
+  background: transparent;
+  border: none;
+  color: #60a5fa;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.ver-todos-btn:hover {
+  color: #93c5fd;
+  background: #1f1f1f;
+}
+
+.ver-todos-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ===== Últimos Adicionados ===== */
+.ultimos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ultimo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 4px;
+  border-bottom: 1px solid #1f1f1f;
+}
+
+.ultimo-item:last-child {
+  border-bottom: none;
+}
+
+.ultimo-item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ultimo-item-modelo {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f2f2f2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ultimo-item-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ultimo-item-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+@media (max-width: 480px) {
+  .ultimo-item {
+    align-items: flex-start;
+  }
+
+  .ultimo-item-meta {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ultimo-item-meta-item {
+    max-width: 100%;
+  }
+}
+
+/* ===== Igualdade de altura entre "Ações Rápidas" e "Últimos Adicionados" ===== */
+.grid-cards {
+  align-items: stretch; /* comportamento nativo do grid: linha acompanha o item mais alto */
+}
+
+.card--acoes-rapidas,
+.card--ultimos-adicionados {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* preenche a altura que o grid já reservou para a linha */
+}
+
+.card--acoes-rapidas .card-content,
+.card--ultimos-adicionados .card-content {
+  flex: 1;
+  min-height: 0;      /* permite que o overflow funcione dentro do flex */
+  max-height: none;   /* remove o teto fixo de 260px só nesses dois cards */
+  overflow-y: auto;
+}
+
+/* Ações Rápidas: botões compactos, conjunto centralizado no espaço disponível */
+.quick-actions-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px; /* espaço natural abaixo do título/divisor, sem vazio grande */
+}
+
+.quick-action {
+  flex-shrink: 0; /* impede que o botão estique para preencher a altura */
+}
+/* ===== Indicadores "Em Manutenção" e "Máquinas Disponíveis" — redesign sóbrio ===== */
+
+.stat-tile .stat-card {
+  background: #1a1a1a;               /* sóbrio, alinhado ao resto do dashboard (.equip-linha, .acao-btn) */
+  border: 1px solid #262626;
+  box-shadow: none;
+  padding: 18px 20px;
+  min-height: 110px;
+  gap: 6px;
+}
+
+/* Reduz a decoração para não competir com o número */
+.stat-tile .stat-card-decor {
+  opacity: 0.06;
+}
+
+.stat-tile .stat-card-title {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.stat-tile .stat-card-value {
+  color: #f2f2f2;
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums; /* números com mais dígitos não deformam o layout */
+}
+
+.stat-tile .stat-card-value-row {
+  align-items: baseline;
+  gap: 8px;
+}
+
+/* Diferenciação sutil entre os dois indicadores: barra lateral fina, não apenas cor de fundo */
+.stat-tile--manutencao .stat-card {
+  border-left: 3px solid #f59e0b; /* âmbar: alerta discreto de manutenção */
+}
+
+.stat-tile--disponiveis .stat-card {
+  border-left: 3px solid #22c55e; /* verde: disponibilidade, sem neon */
+}
+
+/* Pequeno indicador funcional ao lado do rótulo, sem ícone grande */
+.stat-tile .stat-card-title::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.stat-tile--manutencao .stat-card-title::before {
+  background: #f59e0b;
+}
+
+.stat-tile--disponiveis .stat-card-title::before {
+  background: #22c55e;
+}
+
+/* Garante altura igual entre os dois cards na mesma linha do grid */
+.stat-tile {
+  display: flex;
+}
+
+.stat-tile .stat-card {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .stat-tile .stat-card {
+    min-height: 96px;
+    padding: 16px;
+  }
+}
+
+
 /* ===== Responsivo (Consolidado) ===== */
 @media (max-width: 900px) {
   .geral-tab-layout,

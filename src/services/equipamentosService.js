@@ -6,7 +6,7 @@ export const equipamentosService = {
       .from("equipamentos")
       .select("*")
       .order("created_at", { ascending: false })
-      .limit(5);
+      .limit(3);
     if (error) throw error;
     return data;
   },
