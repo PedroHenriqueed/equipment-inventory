@@ -4604,6 +4604,222 @@ header h1 {
   border-bottom: 1px solid #2a2a2a;
   padding-bottom: 6px;
 }
+/* Limita a largura do card, evitando espaço vazio em telas largas */
+.card--users {
+  width: 100%;
+  max-width: 2100px;
+    min-height: 40px; /* ajuste conforme a quantidade de usuários */
+
+}
+.card--users,
+.card--users .table-wrapper,
+.users-table {
+  overflow: visible;
+}
+.users-table td {
+  position: relative;
+  z-index: 1;
+}
+.users-table td {
+  position: relative;
+  z-index: 1;
+}
+
+/* A célula/linha que contém o dropdown aberto precisa subir acima das outras */
+.users-table td:has(.dropdown-menu) {
+  z-index: 100;
+}
+.users-table .dropdown-wrapper {
+  z-index: 10;
+}
+.card--users .table-wrapper {
+  overflow: visible;
+}
+.home-container--start {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.users-table th,
+.users-table td {
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.users-table tr:last-child td {
+  border-bottom: none;
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #f1f5f9;
+}
+
+.user-role-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.saving-hint {
+  color: #9ca3af;
+  font-size: 13px;
+}
+.user-created-cell {
+  color: #9ca3af;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.status-badge--active {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.status-badge--inactive {
+  color: #9ca3af;
+  background: rgba(156, 163, 175, 0.1);
+  border-color: rgba(156, 163, 175, 0.3);
+}
+
+.status-badge--suspended {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.user-login-cell {
+  color: #9ca3af;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.users-table td .dropdown-field {
+  margin: 0;
+}
+
+.users-table td .dropdown-wrapper {
+  min-width: 140px;
+}
+.users-table .dropdown-field {
+  width: auto;
+}
+
+.users-table .dropdown-wrapper {
+  width: 160px; /* ajuste esse valor conforme necessário */
+}
+
+.users-table .dropdown-trigger {
+  height: 38px; /* menor que o padrão de 46px */
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.dropdown-menu {
+  /* adiciona espaço interno pra barra não colar no texto */
+  padding-right: 4px;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+}
+
+/* Chrome, Edge, Safari */
+.dropdown-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Faz a barra ficar "fora" do fluxo do texto usando gutter (Chrome moderno / Firefox) */
+.dropdown-menu {
+  scrollbar-gutter: stable;
+}
+.dropdown-wrapper {
+  position: relative;
+}
+
+/* Impede que o menu aberto force scroll na página */
+.users-table .table-wrapper {
+  overflow: visible;
+}
+
+.card--users {
+  overflow: visible;
+}
+
+body:has(.dropdown-menu) {
+  overflow: visible;
+}
+@media (max-width: 600px) {
+  .status-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .user-created-cell {
+    font-size: 12px;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .card--users {
+    max-width: 100%;
+  }
+
+  .users-table th,
+  .users-table td {
+    padding: 10px 12px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+}
 
 
 @media (max-width: 640px) {

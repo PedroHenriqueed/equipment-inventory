@@ -4,7 +4,6 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp,
-  ArrowRightLeft,
 } from "lucide-react";
 import AITextLoading from "../components/AITextLoading";
 
@@ -179,7 +178,7 @@ export default function AuditoriaPage() {
                     color: ACOES.TRANSFERENCIA.cor,
                   }}
                 >
-                  <ArrowRightLeft size={12} style={{ marginRight: 4 }} />
+
                   {ACOES.TRANSFERENCIA.label}
                 </span>
 

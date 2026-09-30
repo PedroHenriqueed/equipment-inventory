@@ -1,9 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { Skeleton } from "../components/Skeleton";
+import Dropdown from "../components/ui/Dropdown";
+
 
 
 const ROLES = ["user", "editor", "admin", "superadmin"];
+
+function getInitials(nome = "") {
+  const partes = nome.trim().split(" ").filter(Boolean);
+  if (partes.length === 0) return "?";
+  if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+  return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+}
+function formatDate(dateString) {
+  if (!dateString) return "—";
+  return new Date(dateString).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+function formatRelativeLogin(dateString) {
+  if (!dateString) return "Nunca";
+  const diffMs = Date.now() - new Date(dateString).getTime();
+  const minutes = Math.floor(diffMs / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (minutes < 1) return "agora";
+  if (minutes < 60) return `${minutes}min atrás`;
+  if (hours < 24) return `${hours}h atrás`;
+  return `${days}d atrás`;
+}
+
+const STATUS_LABELS = {
+  active: "Ativo",
+  inactive: "Inativo",
+  suspended: "Suspenso",
+};
+
 
 function Configuracoes() {
   const [currentProfile, setCurrentProfile] = useState(null);
@@ -44,7 +81,7 @@ function Configuracoes() {
     if (profile.role === "superadmin") {
       const { data, error: usersError } = await supabase
         .from("profiles")
-        .select("id,nome,role")
+        .select("id,nome,role,created_at,status,last_sign_in_at")
         .order("nome", { ascending: true });
 
       if (usersError) {
@@ -122,56 +159,63 @@ if (loading) {
   const isSuperAdmin = currentProfile?.role === "superadmin";
 
   return (
-    <div className="home-container">
-
-
+    <div className="home-container home-container--start">
       {isSuperAdmin ? (
-        <div className="card">
+        <div className="card card--users">
           <h2>Gerenciar funções dos usuários</h2>
 
           <div className="table-wrapper">
-            <table className="equipment-table">
+            <table className="equipment-table users-table">
               <thead>
                 <tr>
-                  <th>Nome</th>
+                  <th>Usuário</th>
                   <th>Função</th>
+                  <th>Status</th>
+                  <th>Último login</th>
                 </tr>
               </thead>
               <tbody>
                 {users.length === 0 ? (
                   <tr>
-                    <td colSpan={2} className="empty-state">
+                    <td colSpan={4} className="empty-state">
                       Nenhum usuário encontrado.
                     </td>
                   </tr>
                 ) : (
                   users.map((u) => (
                     <tr key={u.id}>
-                      <td>{u.nome}</td>
                       <td>
-                        <select
-                          className="filter-select"
-                          value={u.role}
-                          disabled={saving === u.id}
-                          onChange={(e) => alterarRole(u.id, e.target.value)}
-                        >
-                          {ROLES.map((r) => (
-                            <option key={r} value={r}>
-                              {r}
-                            </option>
-                          ))}
-                        </select>
-                        {saving === u.id && (
-                          <span
-                            style={{
-                              marginLeft: 8,
-                              color: "#9ca3af",
-                              fontSize: 13,
-                            }}
-                          >
-                            salvando...
+                        <div className="user-cell">
+                          <span className="user-avatar" aria-hidden="true">
+                            {getInitials(u.nome)}
                           </span>
-                        )}
+                          <span className="user-name">{u.nome}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="user-role-cell">
+                          <Dropdown
+                            name={`role-${u.id}`}
+                            value={u.role}
+                            onChange={(e) => alterarRole(u.id, e.target.value)}
+                            options={ROLES}
+                            disabled={saving === u.id}
+                            placeholder="Selecione..."
+                          />
+                          {saving === u.id && (
+                            <span className="saving-hint">salvando...</span>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <span
+                          className={`status-badge status-badge--${u.status}`}
+                        >
+                          {STATUS_LABELS[u.status] || u.status}
+                        </span>
+                      </td>
+                      <td className="user-login-cell">
+                        {formatRelativeLogin(u.last_sign_in_at)}
                       </td>
                     </tr>
                   ))
