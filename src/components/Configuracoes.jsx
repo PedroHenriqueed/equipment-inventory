@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { Skeleton } from "../components/Skeleton";
 import Dropdown from "../components/ui/Dropdown";
-
-
+import PageHeader from "./ui/PageHeader";
 
 const ROLES = ["user", "editor", "admin", "superadmin"];
 
@@ -13,6 +12,7 @@ function getInitials(nome = "") {
   if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
   return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
 }
+
 function formatDate(dateString) {
   if (!dateString) return "—";
   return new Date(dateString).toLocaleDateString("pt-BR", {
@@ -40,7 +40,6 @@ const STATUS_LABELS = {
   inactive: "Inativo",
   suspended: "Suspenso",
 };
-
 
 function Configuracoes() {
   const [currentProfile, setCurrentProfile] = useState(null);
@@ -111,46 +110,67 @@ function Configuracoes() {
     setSaving(null);
   }
 
-if (loading) {
-  return (
-    <div className="home-container">
-      <div className="card">
-        <Skeleton width="260px" height="1.6rem" className="skeleton-title" />
+  if (loading) {
+    return (
+      <div className="home-container">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "32px",
+          }}
+        >
+          <PageHeader title="Usuários" />
+        </div>
 
-        <div className="table-wrapper">
-          <table className="equipment-table">
-            <thead>
-              <tr>
-                <th>
-                  <Skeleton width="80px" height="1rem" />
-                </th>
-                <th>
-                  <Skeleton width="80px" height="1rem" />
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i}>
-                  <td>
-                    <Skeleton width="140px" height="1.2rem" />
-                  </td>
-                  <td>
-                    <Skeleton width="120px" height="1.8rem" />
-                  </td>
+        <div className="card">
+          <Skeleton width="260px" height="1.6rem" className="skeleton-title" />
+
+          <div className="table-wrapper">
+            <table className="equipment-table">
+              <thead>
+                <tr>
+                  <th>
+                    <Skeleton width="80px" height="1rem" />
+                  </th>
+                  <th>
+                    <Skeleton width="80px" height="1rem" />
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i}>
+                    <td>
+                      <Skeleton width="140px" height="1.2rem" />
+                    </td>
+                    <td>
+                      <Skeleton width="120px" height="1.8rem" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   if (error) {
     return (
       <div className="home-container">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "32px",
+          }}
+        >
+          <PageHeader title="Usuários" />
+        </div>
         <p className="error">{error}</p>
       </div>
     );
@@ -160,6 +180,17 @@ if (loading) {
 
   return (
     <div className="home-container home-container--start">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "32px",
+        }}
+      >
+        <PageHeader title="Usuários" />
+      </div>
+
       {isSuperAdmin ? (
         <div className="card card--users">
           <h2>Gerenciar funções dos usuários</h2>

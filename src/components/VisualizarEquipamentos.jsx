@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import EquipmentFilters from "./EquipmentFilters";
 import EquipmentList from "./EquipmentList";
+import PageHeader from "./ui/PageHeader";
 
 const FILTROS_EXATOS = [
   "setor",
@@ -38,7 +39,6 @@ export default function VisualizarEquipamentos({
   setFilters,
   isAdmin,
 }) {
-  // ===== Derivar listas de opções a partir dos equipamentos =====
   const setores = useMemo(() => {
     if (!equipments) return [];
     return [...new Set(equipments.map((e) => e.setor).filter(Boolean))];
@@ -49,7 +49,6 @@ export default function VisualizarEquipamentos({
     return [...new Set(equipments.map((e) => e.responsavel).filter(Boolean))];
   }, [equipments]);
 
-  // ===== Buscar histórico de transferências quando filtrar por responsável =====
   const [historicoIds, setHistoricoIds] = useState(new Set());
 
   useEffect(() => {
@@ -80,12 +79,10 @@ export default function VisualizarEquipamentos({
     buscarHistorico();
   }, [filters.responsavel]);
 
-  // ===== Filtragem =====
   const equipmentsFiltrados = useMemo(() => {
     if (!equipments) return [];
 
     let resultado = equipments.filter((eq) => {
-      // Busca livre (procura em vários campos)
       if (filters.busca) {
         const termo = filters.busca.toLowerCase();
         const camposBusca = [
@@ -102,8 +99,6 @@ export default function VisualizarEquipamentos({
         if (!encontrou) return false;
       }
 
-      // Filtros de valor exato (dropdowns fixos), exceto "responsavel"
-      // que tem tratamento especial abaixo (para incluir histórico)
       for (const key of FILTROS_EXATOS) {
         if (key === "responsavel") continue;
         if (filters[key]) {
@@ -111,19 +106,16 @@ export default function VisualizarEquipamentos({
         }
       }
 
-      // Filtro de responsável: inclui responsável atual OU histórico
       if (filters.responsavel) {
         const combinaAtual = eq.responsavel === filters.responsavel;
         const combinaHistorico = historicoIds.has(eq.id);
         if (!combinaAtual && !combinaHistorico) return false;
       }
 
-      // Filtro de posse
       if (filters.posse) {
         if ((eq.posse || "") !== filters.posse) return false;
       }
 
-      // Filtro de periféricos (múltipla seleção)
       if (filters.perifericos && filters.perifericos.length > 0) {
         const perifEq = getPerifericosAtivos(eq);
         const temTodos = filters.perifericos.every((p) => perifEq.includes(p));
@@ -133,8 +125,6 @@ export default function VisualizarEquipamentos({
       return true;
     });
 
-    // Ordenação: quando filtrar por responsável, o equipamento ATUAL
-    // desse responsável vem primeiro; os do histórico vêm depois.
     if (filters.responsavel) {
       resultado = [...resultado].sort((a, b) => {
         const aAtual = a.responsavel === filters.responsavel ? 0 : 1;
@@ -151,14 +141,29 @@ export default function VisualizarEquipamentos({
     return <p className="empty-state">Erro ao carregar equipamentos.</p>;
 
   return (
-    <div>
-      <EquipmentFilters
-        filters={filters}
-        setFilters={setFilters}
-        setores={setores}
-        responsaveis={responsaveis}
-      />
+    <div className="home-container">
+      {/* 1. Título no topo */}
+      <div style={{ marginBottom: "20px" }}>
+        <PageHeader title="Equipamentos" />
+      </div>
 
+      {/* 2. Filtros abaixo do título e alinhados à direita */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-start",
+          marginBottom: "20px",
+        }}
+      >
+        <EquipmentFilters
+          filters={filters}
+          setFilters={setFilters}
+          setores={setores}
+          responsaveis={responsaveis}
+        />
+      </div>
+
+      {/* 3. Tabela de Equipamentos */}
       <EquipmentList
         equipments={equipmentsFiltrados}
         onEdit={onEdit}

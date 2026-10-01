@@ -1,6 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import EquipmentForm from "../components/EquipmentForm";
+import PageHeader from "./ui/PageHeader";
 
 export default function CadastrarEquipamento({ onSave, onSuccess }) {
   const [saving, setSaving] = useState(false);
@@ -31,13 +32,16 @@ export default function CadastrarEquipamento({ onSave, onSuccess }) {
 
   return (
     <div className="page">
-      <header>
-        <h1>Cadastrar Equipamento</h1>
-        <p className="subtitle">
-          Preencha os dados abaixo para registrar um novo equipamento no
-          inventário.
-        </p>
-      </header>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "32px",
+        }}
+      >
+        <PageHeader title="Cadastrar Equipamento" />
+      </div>
 
       <EquipmentForm
         key={formKey}

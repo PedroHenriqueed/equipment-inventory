@@ -6,6 +6,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import AITextLoading from "../components/AITextLoading";
+import PageHeader from "./ui/PageHeader";
 
 
 
@@ -130,8 +131,15 @@ export default function AuditoriaPage() {
 
   return (
     <div className="auditoria-page">
-      <div className="auditoria-header">
-        <h1>Histórico de Alterações</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "32px",
+        }}
+      >
+        <PageHeader title="Histórico de Alterações" />
         <button onClick={carregarLogs} className="btn-refresh" type="button">
           <RefreshCw size={16} /> Atualizar
         </button>
@@ -178,7 +186,6 @@ export default function AuditoriaPage() {
                     color: ACOES.TRANSFERENCIA.cor,
                   }}
                 >
-
                   {ACOES.TRANSFERENCIA.label}
                 </span>
 

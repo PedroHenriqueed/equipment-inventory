@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import ActionMenu from "./ActionMenu";
-import { Status } from "../components/ui/Status";
 
 const COLUMNS = [
   { key: "status", label: "Status" },

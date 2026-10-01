@@ -3,6 +3,7 @@ import { Plus, RefreshCw } from "lucide-react";
 import { usePrinters } from "../services/usePrinters";
 import PrinterCard from "./ui/PrinterCard";
 import PrinterFormModal from "./PrinterFormModal";
+import PageHeader from "./ui/PageHeader";
 
 const ORDEM_STATUS = {
   online: 0,
@@ -25,8 +26,15 @@ export default function PrintersPage({ isAdmin }) {
 
   return (
     <div className="home-container">
-      <div className="header">
-        <h1>Impressoras</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "32px",
+        }}
+      >
+        <PageHeader title="Impressoras" />
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             className="btn secondary"

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { RefreshCw, Plus, X } from "lucide-react";
 import { useProvedoras } from "../services/useProvedoras";
 import ProvedoraCard from "./ui/ProvedoraCard";
+import PageHeader from "./ui/PageHeader";
 
 function Modal({ title, onClose, children }) {
   return (
@@ -124,8 +125,16 @@ export default function InternetPage({ isAdmin }) {
 
   return (
     <div className="home-container">
-      <div className="header">
-        <h1>Internet</h1>
+      {/* Cabeçalho Padronizado */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "32px",
+        }}
+      >
+        <PageHeader title="Internet" />
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             className="btn secondary"
