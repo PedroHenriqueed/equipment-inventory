@@ -1,6 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Home as HomeIcon, Plus, List, User, History } from "lucide-react";
+import {
+  Home as HomeIcon,
+  Plus,
+  List,
+  User,
+  History,
+  Printer,
+  Globe,
+} from "lucide-react";
 
 const menuItems = [
   { key: "inicio", label: "Início", icon: <HomeIcon size={20} /> },
@@ -14,6 +22,16 @@ const menuItems = [
     key: "visualizar",
     label: "Visualizar equipamentos",
     icon: <List size={20} />,
+  },
+  {
+    key: "impressoras",
+    label: "Impressoras",
+    icon: <Printer size={20} />,
+  },
+  {
+    key: "internet",
+    label: "Internet",
+    icon: <Globe size={20} />,
   },
   {
     key: "configuracoes",
@@ -40,7 +58,7 @@ function Sidebar({ activeTab, setActiveTab, open, isAdmin, isSuperAdmin }) {
 
   const handleClick = (key) => {
     setActiveTab(key);
-    navigate("/"); // 👈 garante saída da rota /equipamentos/:id
+    navigate("/");
   };
 
   return (

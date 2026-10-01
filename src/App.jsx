@@ -16,6 +16,9 @@ import Cadastro from "./components/Cadastro";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { useEquipments } from "./hooks/useEquipments";
 import EquipmentPageWrapper from "./components/EquipmentPageWrapper";
+import PrintersPage from "./components/PrintersPage";
+import InternetPage from "./components/InternetPage";
+
 import "./styles.css";
 
 function AcessoNegado() {
@@ -195,6 +198,10 @@ function AppContent() {
             isAdmin={isAdmin}
           />
         );
+      case "impressoras":
+        return <PrintersPage isAdmin={isAdmin} />;
+      case "internet":
+        return <InternetPage isAdmin={isAdmin} />;
       case "configuracoes":
         if (!isAdmin) return <AcessoNegado />;
         return <Configuracoes />;
@@ -253,7 +260,8 @@ function AppContent() {
               }
             />
             {/* Todas as outras rotas caem no sistema de abas existente */}
-            <Route path="*" element={renderContent()} />
+            <Route path="*" element={renderContent()} 
+            />
           </Routes>
         </main>
 

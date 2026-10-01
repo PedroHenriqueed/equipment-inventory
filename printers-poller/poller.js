@@ -18,6 +18,16 @@ const BASE_OIDS = {
   brotherToner1Low: "1.3.6.1.4.1.2435.2.3.9.1.1.2.10.1.0", // MIB privada Brother (Black Toner)
 };
 
+// Marcas/modelos que não expõem nível de toner via SNMP padrão
+// (Epson usa protocolo proprietário binário "@BDC ST2", não suportado aqui)
+const SEM_SUPORTE_TONER = ["epson"];
+
+function suportaConsultaToner(marcaModelo) {
+  if (!marcaModelo) return true;
+  const desc = marcaModelo.toLowerCase();
+  return !SEM_SUPORTE_TONER.some((marca) => desc.includes(marca));
+}
+
 function statusFromCode(code) {
   switch (code) {
     case 1: // unknown, mas respondeu ao SNMP = está ligada
@@ -31,7 +41,6 @@ function statusFromCode(code) {
       return "desconhecido";
   }
 }
-
 
 // Mapeia o status categórico da Brother para um valor percentual aproximado
 function brotherTonerToPercent(code) {
@@ -70,10 +79,14 @@ function findTonerIndex(session) {
       const match = results.find(({ value }) => {
         const desc = value.toLowerCase();
         return (
-          desc.includes("toner") &&
+          (desc.includes("toner") ||
+            desc.includes("ink") ||
+            desc.includes("cartridge") ||
+            desc.includes("black")) &&
           !desc.includes("waste") &&
           !desc.includes("drum") &&
-          !desc.includes("fuser")
+          !desc.includes("fuser") &&
+          !desc.includes("maintenance")
         );
       });
 
@@ -103,7 +116,7 @@ function getValue(session, oid) {
   });
 }
 
-async function getPrinterData(ip) {
+async function getPrinterData(ip, marcaModelo) {
   const session = snmp.createSession(ip, COMMUNITY, { timeout: TIMEOUT });
 
   try {
@@ -111,6 +124,11 @@ async function getPrinterData(ip) {
 
     if (statusCode === null) {
       return { status: "offline", nivel_toner: null };
+    }
+
+    // Impressoras sem suporte a consulta de toner via SNMP padrão (ex: Epson)
+    if (!suportaConsultaToner(marcaModelo)) {
+      return { status: statusFromCode(statusCode), nivel_toner: null };
     }
 
     // Descobre dinamicamente o índice do toner; se não achar, usa "1" como fallback
@@ -158,7 +176,7 @@ async function run() {
 
   const { data: printers, error } = await supabase
     .from("printers")
-    .select("id, ip");
+    .select("id, ip, marca,modelo");
 
   if (error) {
     console.error("Erro ao buscar impressoras no Supabase:", error.message);
@@ -172,7 +190,7 @@ async function run() {
 
   for (const printer of printers) {
     console.log(`Consultando ${printer.ip}...`);
-    const result = await getPrinterData(printer.ip);
+    const result = await getPrinterData(printer.ip, printer.modelo);
 
     const { error: updateError } = await supabase
       .from("printers")
